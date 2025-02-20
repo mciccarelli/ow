@@ -2,9 +2,9 @@ import './globals.css'
 
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-
-import { ThemeProvider } from 'components/providers/theme-provider'
-import { ModeToggle } from '@/components/ui/mode-toggle'
+import { SWRConfig } from 'swr'
+import { ThemeProvider } from '@/components/providers/theme-provider'
+import { Navbar } from '@/components/navbar'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Derive',
-  description: 'Take Home Challenge',
+  title: 'Options Wizard',
+  description: '',
 }
 
 export default function RootLayout({
@@ -28,13 +28,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <header className="w-full h-16 bg-background text-foreground flex items-center justify-between px-4">
-            <h1 className="text-xl font-semibold">Options Wizard</h1>
-            <ModeToggle />
-          </header>
-          {children}
+          <SWRConfig
+            value={{
+              refreshInterval: 15000,
+              revalidateOnFocus: true,
+              revalidateOnReconnect: true,
+              dedupingInterval: 2500,
+            }}
+          >
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <footer className="w-full bg-background text-foreground flex items-center justify-center p-6">
+              <p className="font-mono text-xs text-foreground/40">&copy; Copyright 2025. Highs&Lows Software Company</p>
+            </footer>
+          </SWRConfig>
         </ThemeProvider>
       </body>
     </html>

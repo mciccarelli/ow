@@ -1,28 +1,19 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-
-import fetchAllCurrencies from 'lib/api/fetch-all-currencies'
-import { CurrencyResponseSchema } from 'types/public.get_all_currencies'
-import { Skeleton } from 'components/ui/skeleton'
+import React, { Suspense } from 'react'
+import { CurrencySkeleton } from '@/components/currency-card'
+import { CurrencyList } from '@/components/currency-list'
 
 export default function Home() {
-  const [currencies, setCurrencies] = useState<CurrencyResponseSchema[]>([])
-
-  useEffect(() => {
-    const fetch = async () => {
-      const { result } = await fetchAllCurrencies()
-      const filteredResult = result.filter(c => ['BTC', 'ETH'].includes(c.currency))
-      setCurrencies(filteredResult)
-    }
-    fetch()
-  }, [])
-
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center space-y-6">
-      <Skeleton className="h-[40px] w-[650px] rounded-xl" />
-      <Skeleton className="h-[24px] w-[400px] rounded-xl" />
-      <Skeleton className="h-[24px] w-[300px] rounded-xl" />
+    <div className="container mx-auto flex flex-col space-y-6 items-center p-6">
+      <div className="flex flex-col leading-none items-start w-full max-w-2xl">
+        <h2 className="text-2xl font-bold font-sans text-center">Available Currencies</h2>
+        <h4 className="text-2xl text-muted-foreground/40">Prices refresh every 15 seconds</h4>
+      </div>
+      <Suspense fallback={<CurrencySkeleton />}>
+        <CurrencyList />
+      </Suspense>
     </div>
   )
 }
