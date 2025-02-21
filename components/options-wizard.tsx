@@ -68,7 +68,7 @@ export function OptionsWizard() {
   )
 
   return (
-    <div className="max-w-xl w-full mx-auto space-y-6">
+    <div className="max-w-xl w-full mx-auto space-y-6 px-4 md:px-0">
       <Card className="rounded-none">
         <CardHeader>
           <CardTitle className="text-3xl leading-none font-black font-sans">Options Trading Wizard</CardTitle>
@@ -78,7 +78,7 @@ export function OptionsWizard() {
         </CardHeader>
         <CardContent className="space-y-6">
           <SelectCurrency />
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <SelectExpiry />
             <SelectStrike />
           </div>

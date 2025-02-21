@@ -77,11 +77,11 @@ export function SelectCurrency() {
         <SelectContent>
           {currencies?.map(currencyData => (
             <SelectItem key={currencyData.currency} value={currencyData.currency} className="py-2">
-              <div className="w-full grid grid-cols-[1fr_120px_160px_1fr] gap-2 items-center">
-                <div className="font-semibold text-sm">{currencyData?.currency}</div>
-                <div className="text-xs font-mono">{currencyData?.formatted_spot_price}</div>
-                <div className="text-xs text-muted-foreground font-mono">
-                  24hr {currencyData?.formatted_spot_price_24h}
+              <div className="w-full grid grid-cols-[minmax(32px,1fr)_80px_80px_60px] md:grid-cols-[1fr_120px_160px_80px] gap-2 items-center">
+                <div className="font-semibold text-sm truncate">{currencyData?.currency}</div>
+                <div className="text-xs font-mono text-right">{currencyData?.formatted_spot_price}</div>
+                <div className="text-xs text-muted-foreground font-mono text-right">
+                  <span className="hidden md:inline-flex">24hr</span> {currencyData?.formatted_spot_price_24h}
                 </div>
                 <div
                   className={`flex items-center justify-end text-xs ${

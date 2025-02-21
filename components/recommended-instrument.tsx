@@ -8,10 +8,10 @@ import { Loader2 } from 'lucide-react'
 export function RecommendedInstrument({ recommendedType, ticker, loadingTicker }: RecommendedInstrumentProps) {
   return (
     <Card className="bg-muted shadow-none rounded-none">
-      <CardHeader>
+      <CardHeader className="p-3 md:p-6">
         {ticker?.result?.instrument_name || loadingTicker ? (
           <>
-            <CardTitle className="text-xl font-sans font-black leading-none">Recommended Instrument</CardTitle>
+            <CardTitle className="md:text-xl font-sans font-black leading-none">Recommended Instrument</CardTitle>
             {recommendedType && (
               <CardDescription className="text-sm font-semibold text-muted-foreground">
                 {recommendedType === 'C' && <span className="text-green-500">Buy Call—Price Expected to go up</span>}
@@ -28,7 +28,7 @@ export function RecommendedInstrument({ recommendedType, ticker, loadingTicker }
           </>
         )}
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 p-3 md:p-6">
         <div>
           {loadingTicker ? (
             <div className="flex items-center space-x-2">
