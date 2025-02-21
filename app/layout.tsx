@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { SWRConfig } from 'swr'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { Navbar } from '@/components/navbar'
+import { DEFAULT_REFRESH_INTERVAL, DEFAULT_DEDUPE_INTERVAL } from '@/lib/constants'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -28,18 +29,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col justify-center`}
+      >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <SWRConfig
             value={{
-              refreshInterval: 15000,
+              refreshInterval: DEFAULT_REFRESH_INTERVAL,
               revalidateOnFocus: true,
               revalidateOnReconnect: true,
-              dedupingInterval: 2500,
+              dedupingInterval: DEFAULT_DEDUPE_INTERVAL,
             }}
           >
             <Navbar />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 flex flex-col justify-center">{children}</main>
             <footer className="w-full bg-background text-foreground flex items-center justify-center p-6">
               <p className="font-mono text-xs text-foreground/40">&copy; Copyright 2025. Highs&Lows Software Company</p>
             </footer>
