@@ -1,57 +1,53 @@
 'use client'
 
-import { format } from 'date-fns'
+import type { RecommendedInstrumentProps } from '@/types/wizard'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { PriceDisplay } from '@/components'
 import { Loader2 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { PriceDisplay } from '@/components/price-display'
 
-interface RecommendedInstrumentProps {
-  currency: { currency: string }
-  expiry: string
-  strike: string
-  recommendedType: string
-  ticker: { result: { instrument_name: string; best_bid_price: number; best_ask_price: number } }
-  loadingTicker: boolean
-  lastUpdated: Date
-}
-
-export function RecommendedInstrument({
-  currency,
-  expiry,
-  strike,
-  recommendedType,
-  ticker,
-  loadingTicker,
-  lastUpdated,
-}: RecommendedInstrumentProps) {
+export function RecommendedInstrument({ recommendedType, ticker, loadingTicker }: RecommendedInstrumentProps) {
   return (
-    <Card className="bg-muted">
+    <Card className="bg-muted shadow-none rounded-none">
       <CardHeader>
-        <CardTitle className="text-lg">Recommended Instrument</CardTitle>
+        {ticker?.result?.instrument_name || loadingTicker ? (
+          <>
+            <CardTitle className="text-xl font-sans font-black leading-none">Recommended Instrument</CardTitle>
+            {recommendedType && (
+              <CardDescription className="text-sm font-semibold text-muted-foreground">
+                {recommendedType === 'C' && <span className="text-green-500">Buy Call—Price Expected to go up</span>}
+                {recommendedType === 'P' && <span className="text-red-500">Buy Put—Price Expected to go down</span>}
+              </CardDescription>
+            )}
+          </>
+        ) : (
+          <>
+            <CardTitle className="text-xl font-sans font-black leading-none">Ticker Not Found!</CardTitle>
+            <CardDescription className="text-sm text-muted-foreground">
+              Adjust your parameters to try again.
+            </CardDescription>
+          </>
+        )}
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <p className="text-sm text-muted-foreground">Instrument Name</p>
-          <p className="font-mono">
-            {/* {`${currency?.currency}-${expiry}-${strike}-${recommendedType}`} */}
-            {ticker?.result?.instrument_name}
-          </p>
+          {loadingTicker ? (
+            <div className="flex items-center space-x-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span className="tiny">Loading...</span>
+            </div>
+          ) : ticker ? (
+            <div className="flex flex-col space-y-4">
+              <div>
+                <p className="text-sm font-semibold text-muted-foreground">Instrument Name</p>
+                <p>{ticker?.result?.instrument_name}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <PriceDisplay label="Best Bid" price={Number(ticker?.result?.best_bid_price)} />
+                <PriceDisplay label="Best Ask" price={Number(ticker?.result?.best_ask_price)} />
+              </div>
+            </div>
+          ) : null}
         </div>
-
-        {loadingTicker ? (
-          <div className="flex items-center space-x-2">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span>Loading prices...</span>
-          </div>
-        ) : ticker ? (
-          <div className="grid grid-cols-2 gap-4">
-            <PriceDisplay label="Best Bid" price={Number(ticker.result?.best_bid_price)} />
-            <PriceDisplay label="Best Ask" price={Number(ticker.result?.best_ask_price)} />
-            {lastUpdated && (
-              <div className="text-xs text-muted-foreground col-span-2">Updated {format(lastUpdated, 'h:mm:ss a')}</div>
-            )}
-          </div>
-        ) : null}
       </CardContent>
     </Card>
   )

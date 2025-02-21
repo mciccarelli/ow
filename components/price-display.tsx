@@ -1,12 +1,12 @@
 'use client'
 
-import formatUsd from '@/lib/format-usd'
+import { formatUSD } from '@/lib'
 
 export function PriceDisplay({ label, price }: { label: string; price: number }) {
   return (
     <div>
-      <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="font-mono text-lg">{formatUsd(price)}</p>
+      <div className="tiny text-muted-foreground">{label}</div>
+      <div className="text-lg font-semibold">{formatUSD(price)}</div>
     </div>
   )
 }

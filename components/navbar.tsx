@@ -1,4 +1,4 @@
-import { ModeToggle } from '@/components/mode-toggle'
+import { ModeToggle } from '@/components'
 import { ArrowDownUp } from 'lucide-react'
 
 export function Navbar() {
@@ -6,7 +6,7 @@ export function Navbar() {
     <header className="w-full bg-background text-foreground flex items-center justify-between p-6">
       <div className="flex gap-2 items-center">
         <ArrowDownUp size="32" />
-        <div className="flex flex-col gap-y-px leading-none">
+        <div className="flex flex-col gap-y-px leading-none -mt-px">
           <span className="uppercase font-semibold text-xs">Highs&Lows</span>
           <span className="uppercase font-normal text-[10px]">Ride The Market</span>
         </div>

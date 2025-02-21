@@ -4,6 +4,15 @@ module.exports = {
   darkMode: ['class'],
   content: ['app/**/*.{ts,tsx}', 'components/**/*.{ts,tsx}'],
   theme: {
+    fontSize: {
+      xs: '0.6875rem',
+      sm: '0.75rem',
+      base: '0.875rem',
+      lg: '1rem',
+      xl: '1.125rem',
+      '2xl': '1.25rem',
+      '3xl': '1.5rem',
+    },
     extend: {
       borderRadius: {
         lg: 'var(--radius)',

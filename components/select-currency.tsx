@@ -1,16 +1,13 @@
 'use client'
 
-import { memo } from 'react'
 import useSWR from 'swr'
+import { memo } from 'react'
 import { useAtom } from 'jotai'
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from '@/components'
 import { currencyAtom, lastUpdatedAtom } from '@/store/wizard'
-import fetchAllCurrencies from '@/lib/api/fetch-all-currencies'
-import calculatePercentageChange from '@/lib/calculate-change'
-import formatUSD from '@/lib/format-usd'
-import type { Currency } from '@/types/wizard'
+import { fetchAllCurrencies, calculatePercentageChange, formatUSD } from '@/lib'
+import type { CurrencyProps } from '@/types/wizard'
 
 // Memoized currency row component
 const CurrencyRow = memo(function CurrencyRow({
@@ -19,9 +16,9 @@ const CurrencyRow = memo(function CurrencyRow({
   formatted_spot_price_24h,
   percentageChange,
   isPositive,
-}: Currency) {
+}: CurrencyProps) {
   return (
-    <div className="w-full grid grid-cols-[80px_120px_160px_1fr] gap-2 items-center">
+    <div className="w-full grid grid-cols-[1fr_120px_160px_1fr] gap-2 items-center">
       <div className="font-semibold text-sm">{currency}</div>
       <div className="text-xs font-mono">{formatted_spot_price}</div>
       <div className="text-xs text-muted-foreground font-mono">24hr {formatted_spot_price_24h}</div>
@@ -41,7 +38,7 @@ export function SelectCurrency() {
     data: currencies,
     error,
     isLoading,
-  } = useSWR<Currency[]>(
+  } = useSWR<CurrencyProps[]>(
     'currencies',
     async () => {
       try {

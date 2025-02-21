@@ -2,13 +2,10 @@
 
 import useSWR from 'swr'
 import { useAtom } from 'jotai'
-import { useMemo, memo } from 'react'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
-import { currencyAtom, expiryAtom, strikeAtom, recommendedTypeAtom } from '@/store/wizard'
-import fetchInstruments from '@/lib/api/fetch-instruments'
-import formatUSD from '@/lib/format-usd'
-import type { Currency, Strike } from '@/types/wizard'
+import { useMemo } from 'react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from '@/components'
+import { currencyAtom, expiryAtom, strikeAtom, recommendedTypeAtom, lastUpdatedAtom } from '@/store/wizard'
+import { DEFAULT_DEDUPE_INTERVAL, fetchInstruments, formatUSD } from '@/lib'
 
 interface SelectStrikeProps {
   onStrikeSelect?: (strike: number) => void
@@ -19,6 +16,7 @@ export function SelectStrike({ onStrikeSelect }: SelectStrikeProps) {
   const [expiry] = useAtom(expiryAtom)
   const [strike, setStrike] = useAtom(strikeAtom)
   const [, setRecommendedType] = useAtom(recommendedTypeAtom)
+  const [, setLastUpdated] = useAtom(lastUpdatedAtom)
 
   const {
     data: instruments,
@@ -26,16 +24,13 @@ export function SelectStrike({ onStrikeSelect }: SelectStrikeProps) {
     error,
   } = useSWR(
     currency?.currency && expiry ? ['instruments', currency.currency, expiry] : null,
-    () =>
-      fetchInstruments({
-        currency: currency!.currency,
-        expired: false,
-        instrument_type: 'option',
-      }),
+    () => fetchInstruments({ currency: currency!.currency, expired: false, instrument_type: 'option' }),
     {
       keepPreviousData: true,
-      revalidateOnFocus: false, // Since parent already handles this
-      dedupingInterval: 2500,
+      revalidateOnFocus: false,
+      dedupingInterval: DEFAULT_DEDUPE_INTERVAL,
+      onSuccess: () => setLastUpdated(Date.now()),
+      onError: err => console.error('Failed to fetch instruments:', err),
     }
   )
 
@@ -50,9 +45,6 @@ export function SelectStrike({ onStrikeSelect }: SelectStrikeProps) {
     const strikeValue = Number(value)
     setStrike(strikeValue)
     onStrikeSelect?.(strikeValue)
-
-    console.log('currency', currency)
-    console.log('strikeValue', strikeValue)
 
     if (currency?.spot_price) {
       const spotPrice = Number(currency.spot_price)
@@ -79,30 +71,29 @@ export function SelectStrike({ onStrikeSelect }: SelectStrikeProps) {
     )
   }
 
-  if (isLoading) {
-    return <Skeleton className="h-10 w-full" />
-  }
-
   if (!expiry) return null
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <label className="text-xs uppercase">Strike Price</label>
-        {isLoading && <span className="text-xs text-muted-foreground">Loading...</span>}
       </div>
-      <Select value={strike?.toString()} onValueChange={handleStrikeChange} disabled={isDisabled}>
-        <SelectTrigger>
-          <SelectValue placeholder="Select strike price" />
-        </SelectTrigger>
-        <SelectContent>
-          {sortedStrikes.map(strike => (
-            <SelectItem key={strike} value={strike.toString()}>
-              {formatUSD(strike)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {isLoading ? (
+        <Skeleton className="h-10 w-full" />
+      ) : (
+        <Select value={strike?.toString()} onValueChange={handleStrikeChange} disabled={isDisabled}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select strike price" />
+          </SelectTrigger>
+          <SelectContent>
+            {sortedStrikes.map(strike => (
+              <SelectItem key={strike} value={strike.toString()}>
+                {formatUSD(strike)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
     </div>
   )
 }
