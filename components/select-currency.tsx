@@ -1,34 +1,12 @@
 'use client'
 
 import useSWR from 'swr'
-import { memo } from 'react'
 import { useAtom } from 'jotai'
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from '@/components'
+import { fetchAllCurrencies, calculatePercentageChange, formatUSD, DEFAULT_DEDUPE_INTERVAL } from '@/lib'
 import { currencyAtom, lastUpdatedAtom } from '@/store/wizard'
-import { fetchAllCurrencies, calculatePercentageChange, formatUSD } from '@/lib'
 import type { CurrencyProps } from '@/types/wizard'
-
-// Memoized currency row component
-const CurrencyRow = memo(function CurrencyRow({
-  currency,
-  formatted_spot_price,
-  formatted_spot_price_24h,
-  percentageChange,
-  isPositive,
-}: CurrencyProps) {
-  return (
-    <div className="w-full grid grid-cols-[1fr_120px_160px_1fr] gap-2 items-center">
-      <div className="font-semibold text-sm">{currency}</div>
-      <div className="text-xs font-mono">{formatted_spot_price}</div>
-      <div className="text-xs text-muted-foreground font-mono">24hr {formatted_spot_price_24h}</div>
-      <div className={`flex items-center justify-end text-xs ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-        {isPositive ? <ArrowUpIcon className="h-3 w-3 shrink-0" /> : <ArrowDownIcon className="h-3 w-3 shrink-0" />}
-        <span className="tabular-nums font-mono ml-1">{percentageChange}%</span>
-      </div>
-    </div>
-  )
-})
 
 export function SelectCurrency() {
   const [currency, setCurrency] = useAtom(currencyAtom)
@@ -65,7 +43,7 @@ export function SelectCurrency() {
     },
     {
       revalidateOnFocus: true,
-      dedupingInterval: 2500,
+      dedupingInterval: DEFAULT_DEDUPE_INTERVAL,
       keepPreviousData: true,
       errorRetryCount: 3,
     }
@@ -99,7 +77,25 @@ export function SelectCurrency() {
         <SelectContent>
           {currencies?.map(currencyData => (
             <SelectItem key={currencyData.currency} value={currencyData.currency} className="py-2">
-              <CurrencyRow {...currencyData} />
+              <div className="w-full grid grid-cols-[1fr_120px_160px_1fr] gap-2 items-center">
+                <div className="font-semibold text-sm">{currencyData?.currency}</div>
+                <div className="text-xs font-mono">{currencyData?.formatted_spot_price}</div>
+                <div className="text-xs text-muted-foreground font-mono">
+                  24hr {currencyData?.formatted_spot_price_24h}
+                </div>
+                <div
+                  className={`flex items-center justify-end text-xs ${
+                    currencyData?.isPositive ? 'text-green-500' : 'text-red-500'
+                  }`}
+                >
+                  {currencyData?.isPositive ? (
+                    <ArrowUpIcon className="h-3 w-3 shrink-0" />
+                  ) : (
+                    <ArrowDownIcon className="h-3 w-3 shrink-0" />
+                  )}
+                  <span className="tabular-nums font-mono ml-1">{currencyData?.percentageChange}%</span>
+                </div>
+              </div>
             </SelectItem>
           ))}
         </SelectContent>

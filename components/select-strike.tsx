@@ -7,11 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton
 import { currencyAtom, expiryAtom, strikeAtom, recommendedTypeAtom, lastUpdatedAtom } from '@/store/wizard'
 import { DEFAULT_DEDUPE_INTERVAL, fetchInstruments, formatUSD } from '@/lib'
 
-interface SelectStrikeProps {
-  onStrikeSelect?: (strike: number) => void
-}
-
-export function SelectStrike({ onStrikeSelect }: SelectStrikeProps) {
+export function SelectStrike() {
   const [currency] = useAtom(currencyAtom)
   const [expiry] = useAtom(expiryAtom)
   const [strike, setStrike] = useAtom(strikeAtom)
@@ -44,7 +40,6 @@ export function SelectStrike({ onStrikeSelect }: SelectStrikeProps) {
   const handleStrikeChange = (value: string) => {
     const strikeValue = Number(value)
     setStrike(strikeValue)
-    onStrikeSelect?.(strikeValue)
 
     if (currency?.spot_price) {
       const spotPrice = Number(currency.spot_price)
