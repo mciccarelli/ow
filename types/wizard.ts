@@ -25,7 +25,7 @@ export interface ExpiryProps {
   formattedDate: Date
 }
 
-export interface RecommendedInstrumentProps {
+export interface RecommendedProps {
   ticker: { result: PublicGetTickerResultSchema }
   recommendedType?: string
   loadingTicker?: boolean

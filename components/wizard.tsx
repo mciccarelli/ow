@@ -5,7 +5,7 @@ import { useMemo, useEffect } from 'react'
 import { useAtom } from 'jotai'
 import { format } from 'date-fns/format'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { SelectCurrency, SelectExpiry, SelectStrike, RecommendedInstrument, Plus } from '@/components'
+import { SelectCurrency, SelectExpiry, SelectStrike, Recommended, Plus } from '@/components'
 import { fetchInstruments, fetchTicker } from '@/lib'
 import { DEFAULT_REFRESH_INTERVAL } from '@/lib/constants'
 import {
@@ -96,7 +96,7 @@ export function Wizard() {
             <SelectStrike />
           </div>
           {currency && expiry && strike && recommendedType && (
-            <RecommendedInstrument recommendedType={recommendedType} ticker={ticker} loadingTicker={loadingTicker} />
+            <Recommended recommendedType={recommendedType} ticker={ticker} loadingTicker={loadingTicker} />
           )}
           {instrumentName && (
             <div className="pt-4 border-t flex justify-between items-center">
