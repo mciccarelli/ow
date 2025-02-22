@@ -6,6 +6,8 @@ import { SWRConfig } from 'swr'
 import { Provider as StoreProvider } from 'jotai'
 import { DEFAULT_REFRESH_INTERVAL, DEFAULT_DEDUPE_INTERVAL } from '@/lib/constants'
 import { ThemeProvider, Navbar, Footer } from '@/components'
+// import { TooltipProvider } from '@radix-ui/react-tooltip'
+import { TooltipProvider } from '@/components/ui/tooltip'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -18,7 +20,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Highs&Lows - Options Wizard',
+  title: 'Options Wizard',
   description: '',
 }
 
@@ -45,9 +47,11 @@ export default function RootLayout({
         >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <StoreProvider>
-              <Navbar />
-              <main className="flex-1 flex flex-col justify-center">{children}</main>
-              <Footer />
+              <TooltipProvider>
+                <Navbar />
+                <main className="flex-1 flex flex-col justify-center">{children}</main>
+                <Footer />
+              </TooltipProvider>
             </StoreProvider>
           </ThemeProvider>
         </SWRConfig>
