@@ -68,6 +68,9 @@
   h6 {
     @apply font-sans font-bold;
   }
+  p {
+    @apply text-sm md:text-lg;
+  }
   label,
   .tiny {
     @apply text-xs uppercase tracking-wide;
