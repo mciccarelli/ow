@@ -21,7 +21,7 @@ export function Navbar() {
           <ArrowDownUp size="32" />
           <div className="flex flex-col gap-y-px leading-none -mt-px">
             <span className="uppercase font-bold text-xs">Highs&Lows</span>
-            <span className="uppercase font-normal text-[10px]">Ride The Market</span>
+            <span className="uppercase font-normal text-[10px]">Options Wizard</span>
           </div>
         </div>
       </Link>

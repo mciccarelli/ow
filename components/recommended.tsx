@@ -4,6 +4,7 @@ import type { RecommendedProps } from '@/types/wizard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { PriceDisplay } from '@/components'
 import { Loader2 } from 'lucide-react'
+import Link from 'next/link'
 
 export function Recommended({ recommendedType, ticker, loadingTicker }: RecommendedProps) {
   // render loading state
@@ -27,7 +28,11 @@ export function Recommended({ recommendedType, ticker, loadingTicker }: Recommen
         <CardHeader>
           <CardTitle className="text-xl font-sans font-black leading-none">Ticker Not Found!</CardTitle>
           <CardDescription className="text-sm text-muted-foreground">
-            Adjust your parameters to try again.
+            Adjust your parameters to try again. <br />
+            <Link href="/" className="text-blue-500 hover:opacity-80 transition-opacity">
+              Return to the frontpage
+            </Link>{' '}
+            to start over.
           </CardDescription>
         </CardHeader>
       </Card>
