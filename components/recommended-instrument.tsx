@@ -7,8 +7,16 @@ import { Loader2 } from 'lucide-react'
 
 export function RecommendedInstrument({ recommendedType, ticker, loadingTicker }: RecommendedInstrumentProps) {
   return (
-    <Card className="bg-muted shadow-none rounded-none">
-      <CardHeader className="p-3 md:p-6">
+    <Card
+      className={`shadow-none rounded-none ${
+        recommendedType
+          ? recommendedType === 'C'
+            ? 'bg-[hsl(var(--chart-2))]/10'
+            : 'bg-[hsl(var(--chart-1))]/10'
+          : 'bg-muted'
+      }`}
+    >
+      <CardHeader>
         {ticker?.result?.instrument_name || loadingTicker ? (
           <>
             <CardTitle className="md:text-xl font-sans font-black leading-none">Recommended Instrument</CardTitle>
@@ -32,7 +40,7 @@ export function RecommendedInstrument({ recommendedType, ticker, loadingTicker }
           </>
         )}
       </CardHeader>
-      <CardContent className="space-y-4 p-3 md:p-6">
+      <CardContent className="space-y-4">
         <div>
           {loadingTicker ? (
             <div className="flex items-center space-x-2">
@@ -42,11 +50,11 @@ export function RecommendedInstrument({ recommendedType, ticker, loadingTicker }
           ) : ticker ? (
             <div className="flex flex-col space-y-4">
               <div>
-                <p className="text-sm font-semibold text-muted-foreground">Instrument Name</p>
+                <p className="tiny text-muted-foreground">Instrument Name</p>
                 <p>{ticker?.result?.instrument_name}</p>
               </div>
               <div>
-                <p className="text-sm font-semibold text-muted-foreground">Index</p>
+                <p className="tiny text-muted-foreground">Index</p>
                 <p>{ticker?.result?.option_details?.index}</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
