@@ -91,7 +91,7 @@ export function SelectCurrency() {
             >
               {/* Desktop Layout */}
               <div className="hidden sm:grid grid-cols-currency gap-2 items-center w-full">
-                <div className="font-semibold text-sm truncate pl-5">{currencyData?.currency}</div>
+                <div className="font-semibold text-sm pl-5 [.select-trigger_&]:pl-0">{currencyData?.currency}</div>
                 <div className="text-right text-xs font-mono">{currencyData?.formatted_spot_price}</div>
                 <div className="text-right text-xs text-muted-foreground font-mono">
                   {currencyData?.formatted_spot_price_24h}
@@ -99,7 +99,7 @@ export function SelectCurrency() {
                 <div
                   className={`flex items-center justify-end text-xs ${
                     currencyData?.isPositive ? 'text-[hsl(var(--chart-2))]' : 'text-[hsl(var(--chart-1))]'
-                  } [.select-trigger_&]:pr-2.5`}
+                  } [.select-trigger_&]:pr-2.5 `}
                 >
                   {currencyData?.isPositive ? (
                     <ArrowUpIcon className="h-3 w-3 shrink-0" />

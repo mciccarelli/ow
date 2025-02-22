@@ -24,7 +24,7 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)',
       },
       gridTemplateColumns: {
-        currency: '80px 116px 116px 100px',
+        currency: '60px 116px 116px 80px',
       },
       colors: {
         background: 'hsl(var(--background))',
