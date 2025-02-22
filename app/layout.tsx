@@ -5,9 +5,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { SWRConfig } from 'swr'
 import { Provider as StoreProvider } from 'jotai'
 import { DEFAULT_REFRESH_INTERVAL, DEFAULT_DEDUPE_INTERVAL } from '@/lib/constants'
-import { ThemeProvider, Navbar, Footer } from '@/components'
-// import { TooltipProvider } from '@radix-ui/react-tooltip'
-import { TooltipProvider } from '@/components/ui/tooltip'
+import { ThemeProvider, TooltipProvider, Navbar, Footer } from '@/components'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
