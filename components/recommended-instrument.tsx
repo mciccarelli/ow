@@ -13,9 +13,13 @@ export function RecommendedInstrument({ recommendedType, ticker, loadingTicker }
           <>
             <CardTitle className="md:text-xl font-sans font-black leading-none">Recommended Instrument</CardTitle>
             {recommendedType && (
-              <CardDescription className="text-sm font-semibold text-muted-foreground">
-                {recommendedType === 'C' && <span className="text-green-500">Buy Call—Price Expected to go up</span>}
-                {recommendedType === 'P' && <span className="text-red-500">Buy Put—Price Expected to go down</span>}
+              <CardDescription className="text-base font-semibold">
+                {recommendedType === 'C' && (
+                  <span className="text-[hsl(var(--chart-2))]">Buy Call—Price Expected to go up</span>
+                )}
+                {recommendedType === 'P' && (
+                  <span className="text-[hsl(var(--chart-1))]">Buy Put—Price Expected to go down</span>
+                )}
               </CardDescription>
             )}
           </>

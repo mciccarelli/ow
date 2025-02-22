@@ -1,8 +1,7 @@
 {
-  "name": "@derivexyz/options-wizard-task",
+  "name": "ow",
   "version": "1.0.0",
   "private": true,
-  "author": "@earthtojake",
   "scripts": {
     "dev": "next",
     "build": "next build",
@@ -26,8 +25,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "framer-motion": "^6",
-    "graphql-request": "^5.2.0",
     "jotai": "^2.12.1",
     "lucide-react": "^0.475.0",
     "motion": "^12.4.7",

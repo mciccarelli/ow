@@ -1,9 +1,20 @@
+'use client'
+
 import { ModeToggle } from '@/components'
 import { ArrowDownUp } from 'lucide-react'
+import { motion } from 'motion/react'
 
 export function Navbar() {
   return (
-    <header className="w-full bg-background text-foreground flex items-center justify-between p-6">
+    <motion.header
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{
+        duration: 0.3,
+        ease: 'easeOut',
+      }}
+      className="w-full bg-background text-foreground flex items-center justify-between p-6"
+    >
       <div className="flex gap-2 items-center">
         <ArrowDownUp size="32" />
         <div className="flex flex-col gap-y-px leading-none -mt-px">
@@ -11,7 +22,8 @@ export function Navbar() {
           <span className="uppercase font-normal text-[10px]">Ride The Market</span>
         </div>
       </div>
+
       <ModeToggle />
-    </header>
+    </motion.header>
   )
 }

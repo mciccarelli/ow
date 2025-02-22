@@ -77,7 +77,7 @@ export function SelectCurrency() {
         <SelectContent>
           {/* Header - Hidden on mobile */}
           <div className="hidden sm:grid px-2 py-2 grid-cols-[80px_120px_160px_100px] gap-2 items-center text-xs text-muted-foreground border-b">
-            <div className="pl-6">Currency</div>
+            <div className="pl-5">Currency</div>
             <div className="text-right">Price</div>
             <div className="text-right">24hr</div>
             <div className="text-right">Change</div>
@@ -87,18 +87,18 @@ export function SelectCurrency() {
             <SelectItem
               key={currencyData.currency}
               value={currencyData.currency}
-              className="py-2 px-2 w-full pl-8 [&>[data-radix-select-item-indicator]]:w-full"
+              className="py-2 px-2 w-full [&>[data-radix-select-item-indicator]]:w-full"
             >
               {/* Desktop Layout */}
               <div className="hidden sm:grid grid-cols-[80px_120px_160px_100px] gap-2 items-center w-full">
-                <div className="font-semibold text-sm truncate">{currencyData?.currency}</div>
+                <div className="font-semibold text-sm truncate pl-5">{currencyData?.currency}</div>
                 <div className="text-right text-xs font-mono">{currencyData?.formatted_spot_price}</div>
                 <div className="text-right text-xs text-muted-foreground font-mono">
                   {currencyData?.formatted_spot_price_24h}
                 </div>
                 <div
                   className={`flex items-center justify-end text-xs ${
-                    currencyData?.isPositive ? 'text-green-500' : 'text-red-500'
+                    currencyData?.isPositive ? 'text-[hsl(var(--chart-2))]' : 'text-[hsl(var(--chart-1))]'
                   } [.select-trigger_&]:pr-2`}
                 >
                   {currencyData?.isPositive ? (
@@ -116,7 +116,11 @@ export function SelectCurrency() {
                 <span className="text-muted-foreground">/</span>
                 <span className="font-mono">{currencyData?.formatted_spot_price}</span>
                 <span className="text-muted-foreground">/</span>
-                <span className={`font-mono ${currencyData?.isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                <span
+                  className={`font-mono ${
+                    currencyData?.isPositive ? 'text-[hsl(var(--chart-2))]' : 'text-[hsl(var(--chart-1))]'
+                  }`}
+                >
                   {currencyData?.percentageChange}%
                 </span>
               </div>

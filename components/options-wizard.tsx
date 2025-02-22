@@ -69,7 +69,7 @@ export function OptionsWizard() {
 
   return (
     <div className="max-w-xl w-full mx-auto space-y-6 px-4 md:px-0">
-      <Card className="rounded-none">
+      <Card>
         <CardHeader>
           <CardTitle className="text-3xl leading-none font-black font-sans">Options Trading Wizard</CardTitle>
           <CardDescription className="text-lg text-muted-foreground font-sans">
