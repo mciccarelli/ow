@@ -20,8 +20,8 @@ export function Navbar() {
         <div className="flex gap-2 items-center">
           <ArrowDownUp size="32" />
           <div className="flex flex-col gap-y-px leading-none -mt-px">
-            <span className="uppercase font-bold text-xs">Highs&Lows</span>
-            <span className="uppercase font-normal text-[10px]">Options Wizard</span>
+            <span className="uppercase font-bold text-xs">Options Wizard</span>
+            <span className="uppercase font-normal text-[10px]">Simulation Only</span>
           </div>
         </div>
       </Link>
