@@ -1,17 +1,24 @@
 'use client'
 
 import useSWR from 'swr'
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
+import { resetWizardAtom } from '@/store/wizard'
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from '@/components'
 import { fetchAllCurrencies, calculatePercentageChange, formatUSD, DEFAULT_DEDUPE_INTERVAL } from '@/lib'
-import { currencyAtom, lastUpdatedAtom, instrumentsFetcherAtom } from '@/store/wizard'
+import { currencyAtom, lastUpdatedAtom, instrumentsFetcherAtom, tickerAtom } from '@/store/wizard'
+import { Button } from '@/components/ui/button'
+import { RefreshCcw } from 'lucide-react'
 import type { CurrencyProps } from '@/types/wizard'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 export function SelectCurrency() {
-  const [currency, setCurrency] = useAtom(currencyAtom)
+  const [, setCurrency] = useAtom(currencyAtom)
   const [, setLastUpdated] = useAtom(lastUpdatedAtom)
   const [, fetchInstruments] = useAtom(instrumentsFetcherAtom)
+  const [ticker] = useAtom(tickerAtom)
+  const [currency] = useAtom(currencyAtom)
+  const resetWizard = useSetAtom(resetWizardAtom)
 
   const {
     data: currencies,
@@ -56,6 +63,10 @@ export function SelectCurrency() {
     await fetchInstruments() // Trigger instruments fetch when currency changes
   }
 
+  const handleReset = () => {
+    resetWizard()
+  }
+
   if (error) {
     return <div className="text-sm text-destructive">Failed to load currencies. Please try again later.</div>
   }
@@ -68,9 +79,32 @@ export function SelectCurrency() {
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <label className="text-xs uppercase font-medium">Currency</label>
-        {isLoading && <span className="text-xs text-muted-foreground">Updating...</span>}
+        <div className="flex items-center gap-2">
+          {isLoading && <span className="text-xs text-muted-foreground">Updating...</span>}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6"
+                onClick={handleReset}
+                disabled={isLoading || !ticker?.result?.instrument_name}
+              >
+                <RefreshCcw className="h-3 w-3" />
+                <span className="sr-only">Reset selections</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="bg-muted-foreground/10 text-foreground">
+              <div className="tiny">Reset</div>
+            </TooltipContent>
+          </Tooltip>
+        </div>
       </div>
-      <Select value={currency?.currency} onValueChange={handleCurrencyChange} disabled={isLoading}>
+      <Select
+        value={currency?.currency}
+        onValueChange={handleCurrencyChange}
+        disabled={isLoading || !!ticker?.result?.instrument_name}
+      >
         <SelectTrigger className="w-full inline-flex items-center select-trigger">
           <SelectValue placeholder="Select a currency" />
         </SelectTrigger>

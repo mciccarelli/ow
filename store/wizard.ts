@@ -1,8 +1,9 @@
-import { atom } from 'jotai'
+import { atom, type SetStateAction } from 'jotai'
 import type { CurrencyProps } from '@/types/wizard'
 import type { ExtendedPublicGetInstrumentsResponseSchema } from '@/types/wizard'
 import { fetchInstruments } from '@/lib'
 import { generateInstrumentName } from '@/lib'
+import { formatInstrumentsData } from '@/lib/format-instruments'
 
 export const currencyAtom = atom<CurrencyProps | undefined>(undefined)
 export const expiryAtom = atom<string | undefined>(undefined)
@@ -27,7 +28,10 @@ export const instrumentsFetcherAtom = atom(
 
     try {
       const data = await fetchInstruments({ currency: currency.currency, expired: false, instrument_type: 'option' })
-      set(instrumentsAtom, data)
+      // Format the response data to include unique expiries
+      // and strikes, to be used in the wizard selectors.
+      const formattedData = formatInstrumentsData(data)
+      set(instrumentsAtom, formattedData)
     } catch (error) {
       console.error('Failed to fetch instruments:', error)
       set(instrumentsAtom, null)
@@ -50,3 +54,11 @@ export const instrumentNameAtom = atom(get => {
 })
 
 export const availableStrikesAtom = atom<number[] | null>(null)
+
+export const resetWizardAtom = atom(null, (get, set) => {
+  set(currencyAtom, undefined)
+  set(expiryAtom, undefined)
+  set(strikeAtom, undefined)
+  set(tickerAtom, null)
+  set(recommendedTypeAtom, undefined)
+})
