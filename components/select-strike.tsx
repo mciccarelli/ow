@@ -1,41 +1,19 @@
 'use client'
 
-import useSWR from 'swr'
 import { useAtom } from 'jotai'
 import { useMemo } from 'react'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from '@/components'
-import { currencyAtom, expiryAtom, strikeAtom, recommendedTypeAtom, lastUpdatedAtom } from '@/store/wizard'
-import { DEFAULT_DEDUPE_INTERVAL, fetchInstruments, formatUSD } from '@/lib'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components'
+import { currencyAtom, expiryAtom, strikeAtom, recommendedTypeAtom, availableStrikesAtom } from '@/store/wizard'
+import { formatUSD } from '@/lib'
 
 export function SelectStrike() {
   const [currency] = useAtom(currencyAtom)
   const [expiry] = useAtom(expiryAtom)
   const [strike, setStrike] = useAtom(strikeAtom)
+  const [availableStrikes] = useAtom(availableStrikesAtom)
   const [, setRecommendedType] = useAtom(recommendedTypeAtom)
-  const [, setLastUpdated] = useAtom(lastUpdatedAtom)
 
-  const {
-    data: instruments,
-    isLoading,
-    error,
-  } = useSWR(
-    currency?.currency && expiry ? ['instruments', currency.currency, expiry] : null,
-    () => fetchInstruments({ currency: currency!.currency, expired: false, instrument_type: 'option' }),
-    {
-      keepPreviousData: true,
-      revalidateOnFocus: false,
-      dedupingInterval: DEFAULT_DEDUPE_INTERVAL,
-      onSuccess: () => setLastUpdated(Date.now()),
-      onError: err => console.error('Failed to fetch instruments:', err),
-    }
-  )
-
-  const sortedStrikes = useMemo(
-    () => instruments?.uniqueStrikes?.sort((a, b) => a - b) || [],
-    [instruments?.uniqueStrikes]
-  )
-
-  const isDisabled = useMemo(() => isLoading || !expiry || !currency?.currency, [isLoading, expiry, currency?.currency])
+  const isDisabled = useMemo(() => !expiry || !currency?.currency, [expiry, currency?.currency])
 
   const handleStrikeChange = (value: string) => {
     const strikeValue = Number(value)
@@ -47,10 +25,6 @@ export function SelectStrike() {
         setRecommendedType(strikeValue > spotPrice ? 'C' : 'P')
       }
     }
-  }
-
-  if (error) {
-    return <div className="text-xs text-destructive">Failed to load strike prices</div>
   }
 
   if (!currency?.currency) {
@@ -73,22 +47,20 @@ export function SelectStrike() {
       <div className="flex items-center justify-between">
         <label className="text-xs uppercase">Strike Price</label>
       </div>
-      {isLoading ? (
-        <Skeleton className="h-10 w-full" />
-      ) : (
-        <Select value={strike?.toString()} onValueChange={handleStrikeChange} disabled={isDisabled}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select strike price" />
-          </SelectTrigger>
-          <SelectContent>
-            {sortedStrikes.map(strike => (
+      <Select value={strike?.toString()} onValueChange={handleStrikeChange} disabled={isDisabled}>
+        <SelectTrigger>
+          <SelectValue placeholder="Select strike price" />
+        </SelectTrigger>
+        <SelectContent>
+          {availableStrikes &&
+            (availableStrikes?.length ?? 0) > 0 &&
+            availableStrikes?.map((strike: number) => (
               <SelectItem key={strike} value={strike.toString()}>
                 {formatUSD(strike)}
               </SelectItem>
             ))}
-          </SelectContent>
-        </Select>
-      )}
+        </SelectContent>
+      </Select>
     </div>
   )
 }
