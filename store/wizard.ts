@@ -1,9 +1,7 @@
-import { atom, type SetStateAction } from 'jotai'
 import type { CurrencyProps } from '@/types/wizard'
 import type { ExtendedPublicGetInstrumentsResponseSchema } from '@/types/wizard'
-import { fetchInstruments } from '@/lib'
-import { generateInstrumentName } from '@/lib'
-import { formatInstrumentsData } from '@/lib/format-instruments'
+import { fetchInstruments, generateInstrumentName, formatInstrumentsData } from '@/lib'
+import { atom } from 'jotai'
 
 export const currencyAtom = atom<CurrencyProps | undefined>(undefined)
 export const expiryAtom = atom<string | undefined>(undefined)
@@ -61,4 +59,6 @@ export const resetWizardAtom = atom(null, (get, set) => {
   set(strikeAtom, undefined)
   set(tickerAtom, null)
   set(recommendedTypeAtom, undefined)
+  set(availableStrikesAtom, null)
+  set(instrumentsAtom, null)
 })

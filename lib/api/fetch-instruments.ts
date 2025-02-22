@@ -4,7 +4,6 @@ import {
 } from '../../types/public.get_instruments'
 import tryApiRequest from './try-api-request'
 import type { ExtendedPublicGetInstrumentsResponseSchema } from '@/types/wizard'
-import { formatInstrumentsData } from '../format-instruments'
 
 export default async function fetchInstruments(
   params: PublicGetInstrumentsParamsSchema

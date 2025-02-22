@@ -2,7 +2,9 @@ import { PublicGetInstrumentsResponseSchema } from '../types/public.get_instrume
 import processTimestamps from './process-timestamps'
 import type { ExtendedPublicGetInstrumentsResponseSchema } from '@/types/wizard'
 
-export function formatInstrumentsData(data: PublicGetInstrumentsResponseSchema): ExtendedPublicGetInstrumentsResponseSchema {
+export default function formatInstrumentsData(
+  data: PublicGetInstrumentsResponseSchema
+): ExtendedPublicGetInstrumentsResponseSchema {
   // Get unique expiries
   const timestamps: number[] = [...new Set(data?.result.map(i => Number(i.option_details.expiry)))].sort(
     (a, b) => a - b

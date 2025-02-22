@@ -101,7 +101,7 @@ export function SelectCurrency() {
         </div>
       </div>
       <Select
-        value={currency?.currency}
+        value={currency?.currency || ''} // Add empty string fallback
         onValueChange={handleCurrencyChange}
         disabled={isLoading || !!ticker?.result?.instrument_name}
       >
