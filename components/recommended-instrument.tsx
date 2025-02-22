@@ -41,6 +41,10 @@ export function RecommendedInstrument({ recommendedType, ticker, loadingTicker }
                 <p className="text-sm font-semibold text-muted-foreground">Instrument Name</p>
                 <p>{ticker?.result?.instrument_name}</p>
               </div>
+              <div>
+                <p className="text-sm font-semibold text-muted-foreground">Index</p>
+                <p>{ticker?.result?.option_details?.index}</p>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <PriceDisplay label="Best Bid" price={Number(ticker?.result?.best_bid_price)} />
                 <PriceDisplay label="Best Ask" price={Number(ticker?.result?.best_ask_price)} />

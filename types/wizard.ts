@@ -1,5 +1,6 @@
 import { CurrencyResponseSchema } from '@/types/public.get_all_currencies'
 import { PublicGetInstrumentsResponseSchema } from '@/types/public.get_instruments'
+import { PublicGetTickerResultSchema } from '@/types/public.get_ticker'
 
 export interface ExtendedPublicGetInstrumentsResponseSchema extends PublicGetInstrumentsResponseSchema {
   uniqueExpiries?: unknown[]
@@ -24,14 +25,8 @@ export interface ExpiryProps {
   formattedDate: Date
 }
 
-export interface TickerProps {
-  best_bid_price: number
-  best_ask_price: number
-  instrument_name: string
-}
-
 export interface RecommendedInstrumentProps {
-  ticker: { result: TickerProps }
+  ticker: { result: PublicGetTickerResultSchema }
   recommendedType?: string
   loadingTicker?: boolean
 }

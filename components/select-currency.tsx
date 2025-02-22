@@ -71,22 +71,35 @@ export function SelectCurrency() {
         {isLoading && <span className="text-xs text-muted-foreground">Updating...</span>}
       </div>
       <Select value={currency?.currency} onValueChange={handleCurrencyChange} disabled={isLoading}>
-        <SelectTrigger>
+        <SelectTrigger className="w-full inline-flex items-center select-trigger">
           <SelectValue placeholder="Select a currency" />
         </SelectTrigger>
         <SelectContent>
+          {/* Header - Hidden on mobile */}
+          <div className="hidden sm:grid px-2 py-2 grid-cols-[80px_120px_160px_100px] gap-2 items-center text-xs text-muted-foreground border-b">
+            <div>Asset</div>
+            <div className="text-right">Price</div>
+            <div className="text-right">24hr</div>
+            <div className="text-right">Change</div>
+          </div>
+
           {currencies?.map(currencyData => (
-            <SelectItem key={currencyData.currency} value={currencyData.currency} className="py-2">
-              <div className="w-full grid grid-cols-[minmax(32px,1fr)_80px_80px_60px] md:grid-cols-[1fr_120px_160px_80px] gap-2 items-center">
+            <SelectItem
+              key={currencyData.currency}
+              value={currencyData.currency}
+              className="py-2 px-2 w-full pl-6 [&>[data-radix-select-item-indicator]]:w-full"
+            >
+              {/* Desktop Layout */}
+              <div className="hidden sm:grid grid-cols-[80px_120px_160px_100px] gap-2 items-center w-full">
                 <div className="font-semibold text-sm truncate">{currencyData?.currency}</div>
-                <div className="text-xs font-mono text-right">{currencyData?.formatted_spot_price}</div>
-                <div className="text-xs text-muted-foreground font-mono text-right">
-                  <span className="hidden md:inline-flex">24hr</span> {currencyData?.formatted_spot_price_24h}
+                <div className="text-right text-xs font-mono">{currencyData?.formatted_spot_price}</div>
+                <div className="text-right text-xs text-muted-foreground font-mono">
+                  {currencyData?.formatted_spot_price_24h}
                 </div>
                 <div
                   className={`flex items-center justify-end text-xs ${
                     currencyData?.isPositive ? 'text-green-500' : 'text-red-500'
-                  }`}
+                  } [.select-trigger_&]:pr-2`}
                 >
                   {currencyData?.isPositive ? (
                     <ArrowUpIcon className="h-3 w-3 shrink-0" />
@@ -95,6 +108,17 @@ export function SelectCurrency() {
                   )}
                   <span className="tabular-nums font-mono ml-1">{currencyData?.percentageChange}%</span>
                 </div>
+              </div>
+
+              {/* Mobile Layout */}
+              <div className="sm:hidden flex items-center space-x-2 text-xs">
+                <span className="font-semibold">{currencyData?.currency}</span>
+                <span className="text-muted-foreground">/</span>
+                <span className="font-mono">{currencyData?.formatted_spot_price}</span>
+                <span className="text-muted-foreground">/</span>
+                <span className={`font-mono ${currencyData?.isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                  {currencyData?.percentageChange}%
+                </span>
               </div>
             </SelectItem>
           ))}
