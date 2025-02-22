@@ -76,7 +76,7 @@ export function SelectCurrency() {
         </SelectTrigger>
         <SelectContent>
           {/* Header - Hidden on mobile */}
-          <div className="hidden sm:grid px-2 py-2 grid-cols-[80px_120px_160px_100px] gap-2 items-center text-xs text-muted-foreground border-b">
+          <div className="hidden sm:grid px-2 py-2 grid-cols-[80px_100px_140px_100px] gap-2 items-center text-xs text-muted-foreground border-b">
             <div className="pl-5">Currency</div>
             <div className="text-right">Price</div>
             <div className="text-right">24hr</div>
@@ -90,7 +90,7 @@ export function SelectCurrency() {
               className="py-2 px-2 w-full [&>[data-radix-select-item-indicator]]:w-full"
             >
               {/* Desktop Layout */}
-              <div className="hidden sm:grid grid-cols-[80px_120px_160px_100px] gap-2 items-center w-full">
+              <div className="hidden sm:grid grid-cols-[80px_100px_140px_100px] gap-2 items-center w-full">
                 <div className="font-semibold text-sm truncate pl-5">{currencyData?.currency}</div>
                 <div className="text-right text-xs font-mono">{currencyData?.formatted_spot_price}</div>
                 <div className="text-right text-xs text-muted-foreground font-mono">
@@ -99,7 +99,7 @@ export function SelectCurrency() {
                 <div
                   className={`flex items-center justify-end text-xs ${
                     currencyData?.isPositive ? 'text-[hsl(var(--chart-2))]' : 'text-[hsl(var(--chart-1))]'
-                  } [.select-trigger_&]:pr-2`}
+                  } [.select-trigger_&]:pr-2.5`}
                 >
                   {currencyData?.isPositive ? (
                     <ArrowUpIcon className="h-3 w-3 shrink-0" />

@@ -1,6 +1,11 @@
 import React from 'react'
-import { OptionsWizard } from '@/components'
+
+import { Hero } from '@/components/hero'
 
 export default function Home() {
-  return <OptionsWizard />
+  return (
+    <div className="flex flex-col justify-center items-center">
+      <Hero />
+    </div>
+  )
 }

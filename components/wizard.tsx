@@ -5,7 +5,7 @@ import { useMemo, useEffect } from 'react'
 import { useAtom } from 'jotai'
 import { format } from 'date-fns/format'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { SelectCurrency, SelectExpiry, SelectStrike, RecommendedInstrument } from '@/components'
+import { SelectCurrency, SelectExpiry, SelectStrike, RecommendedInstrument, Plus } from '@/components'
 import { fetchInstruments, fetchTicker } from '@/lib'
 import { DEFAULT_REFRESH_INTERVAL } from '@/lib/constants'
 import {
@@ -17,8 +17,9 @@ import {
   instrumentNameAtom,
   tickerAtom,
 } from '@/store/wizard'
+import { motion } from 'framer-motion'
 
-export function OptionsWizard() {
+export function Wizard() {
   const [currency] = useAtom(currencyAtom)
   const [expiry] = useAtom(expiryAtom)
   const [strike] = useAtom(strikeAtom)
@@ -68,11 +69,23 @@ export function OptionsWizard() {
   )
 
   return (
-    <div className="max-w-xl w-full mx-auto space-y-6 px-4 md:px-0">
-      <Card>
+    <motion.div
+      initial={{ scale: 0.95, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{
+        duration: 0.4,
+        ease: [0.34, 1.56, 0.64, 1], // Spring-like curve
+        delay: 0.1,
+      }}
+      className="max-w-2xl w-full mx-auto space-y-6 px-6"
+    >
+      <Card className="border border-muted-foreground/15 rounded-none shadow-none p-4 md:p-8 lg:px-12 relative">
+        <Plus className="absolute -top-[13px] -left-[13px]" />
+        <Plus className="absolute -bottom-3 -right-3" />
+
         <CardHeader>
-          <CardTitle className="text-3xl leading-none font-black font-sans">Options Trading Wizard</CardTitle>
-          <CardDescription className="text-lg text-muted-foreground font-sans">
+          <CardTitle className="text-3xl md:text-4xl font-black font-sans">Options Trading Wizard</CardTitle>
+          <CardDescription className="text-base text-muted-foreground font-sans">
             Set your parameters to get a recommended options strategy
           </CardDescription>
         </CardHeader>
@@ -99,6 +112,6 @@ export function OptionsWizard() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   )
 }
