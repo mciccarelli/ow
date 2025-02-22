@@ -77,7 +77,7 @@ export function SelectCurrency() {
         <SelectContent>
           {/* Header - Hidden on mobile */}
           <div className="hidden sm:grid px-2 py-2 grid-cols-[80px_120px_160px_100px] gap-2 items-center text-xs text-muted-foreground border-b">
-            <div>Asset</div>
+            <div className="pl-6">Currency</div>
             <div className="text-right">Price</div>
             <div className="text-right">24hr</div>
             <div className="text-right">Change</div>
@@ -87,7 +87,7 @@ export function SelectCurrency() {
             <SelectItem
               key={currencyData.currency}
               value={currencyData.currency}
-              className="py-2 px-2 w-full pl-6 [&>[data-radix-select-item-indicator]]:w-full"
+              className="py-2 px-2 w-full pl-8 [&>[data-radix-select-item-indicator]]:w-full"
             >
               {/* Desktop Layout */}
               <div className="hidden sm:grid grid-cols-[80px_120px_160px_100px] gap-2 items-center w-full">
