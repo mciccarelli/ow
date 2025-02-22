@@ -1,9 +1,28 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useSetAtom } from 'jotai'
 import { Button } from '@/components/ui/button'
+import { currencyAtom, expiryAtom, strikeAtom, tickerAtom, recommendedTypeAtom } from '@/store/wizard'
 import Link from 'next/link'
 
 export function Hero() {
+  const setCurrency = useSetAtom(currencyAtom)
+  const setExpiry = useSetAtom(expiryAtom)
+  const setStrike = useSetAtom(strikeAtom)
+  const setTicker = useSetAtom(tickerAtom)
+  const setRecommendedType = useSetAtom(recommendedTypeAtom)
+
+  // reset all wizard state on mount
+  useEffect(() => {
+    setCurrency(undefined)
+    setExpiry(undefined)
+    setStrike(undefined)
+    setTicker(undefined)
+
+    setRecommendedType(undefined)
+  }, [setCurrency, setExpiry, setStrike, setTicker, setRecommendedType])
+
   return (
     <div className="relative flex flex-col items-center justify-center overflow-hidden min-h-[calc(100vh-148px)]">
       <div className="relative z-10 container mx-auto px-4 flex flex-col items-center text-center">
