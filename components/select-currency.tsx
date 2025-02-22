@@ -5,12 +5,13 @@ import { useAtom } from 'jotai'
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from '@/components'
 import { fetchAllCurrencies, calculatePercentageChange, formatUSD, DEFAULT_DEDUPE_INTERVAL } from '@/lib'
-import { currencyAtom, lastUpdatedAtom } from '@/store/wizard'
+import { currencyAtom, lastUpdatedAtom, instrumentsFetcherAtom } from '@/store/wizard'
 import type { CurrencyProps } from '@/types/wizard'
 
 export function SelectCurrency() {
   const [currency, setCurrency] = useAtom(currencyAtom)
   const [, setLastUpdated] = useAtom(lastUpdatedAtom)
+  const [, fetchInstruments] = useAtom(instrumentsFetcherAtom)
 
   const {
     data: currencies,
@@ -49,6 +50,12 @@ export function SelectCurrency() {
     }
   )
 
+  const handleCurrencyChange = async (value: string) => {
+    const selected = currencies?.find(c => c.currency === value)
+    setCurrency(selected)
+    await fetchInstruments() // Trigger instruments fetch when currency changes
+  }
+
   if (error) {
     return <div className="text-sm text-destructive">Failed to load currencies. Please try again later.</div>
   }
@@ -63,14 +70,7 @@ export function SelectCurrency() {
         <label className="text-xs uppercase font-medium">Currency</label>
         {isLoading && <span className="text-xs text-muted-foreground">Updating...</span>}
       </div>
-      <Select
-        value={currency?.currency}
-        onValueChange={value => {
-          const selected = currencies?.find(c => c.currency === value)
-          setCurrency(selected)
-        }}
-        disabled={isLoading}
-      >
+      <Select value={currency?.currency} onValueChange={handleCurrencyChange} disabled={isLoading}>
         <SelectTrigger>
           <SelectValue placeholder="Select a currency" />
         </SelectTrigger>

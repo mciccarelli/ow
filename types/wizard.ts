@@ -1,4 +1,10 @@
 import { CurrencyResponseSchema } from '@/types/public.get_all_currencies'
+import { PublicGetInstrumentsResponseSchema } from '@/types/public.get_instruments'
+
+export interface ExtendedPublicGetInstrumentsResponseSchema extends PublicGetInstrumentsResponseSchema {
+  uniqueExpiries?: unknown[]
+  strikesByExpiry?: Record<number, number[]>
+}
 
 export interface CurrencyProps extends CurrencyResponseSchema {
   formatted_spot_price?: string
