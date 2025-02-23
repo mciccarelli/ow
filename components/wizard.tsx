@@ -79,7 +79,6 @@ export function Wizard() {
         delay: 0.1,
       }}
       className="px-2 md:px-0"
-      //className="max-w-2xl w-full mx-auto space-y-6 px-6"
     >
       <Card className="border border-muted-foreground/15 rounded-none shadow-none relative">
         <Plus className="absolute -top-[13px] -left-[13px]" />
