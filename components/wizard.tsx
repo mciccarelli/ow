@@ -78,9 +78,9 @@ export function Wizard() {
         ease: [0.34, 1.56, 0.64, 1], // Spring-like curve
         delay: 0.1,
       }}
-      className="max-w-2xl w-full mx-auto space-y-6 px-6"
+      className="px-2 md:px-0"
     >
-      <Card className="border border-muted-foreground/15 rounded-none shadow-none p-4 md:p-8 lg:px-12 relative">
+      <Card className="border border-muted-foreground/15 rounded-none shadow-none relative">
         <Plus className="absolute -top-[13px] -left-[13px]" />
         <Plus className="absolute -bottom-3 -right-3" />
 

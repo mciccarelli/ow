@@ -69,7 +69,7 @@
     @apply font-sans font-bold;
   }
   p {
-    @apply text-sm md:text-lg;
+    @apply text-sm;
   }
   label,
   .tiny {

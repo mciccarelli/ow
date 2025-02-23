@@ -32,9 +32,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any" />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col justify-center`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <SWRConfig
           value={{
             refreshInterval: DEFAULT_REFRESH_INTERVAL,
@@ -46,9 +44,11 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <StoreProvider>
               <TooltipProvider>
-                <Navbar />
-                <main className="flex-1 flex flex-col justify-center">{children}</main>
-                <Footer />
+                <div className="min-h-screen flex flex-col justify-center gap-8">
+                  <Navbar />
+                  <main className="flex-1 flex flex-col justify-center">{children}</main>
+                  <Footer />
+                </div>
               </TooltipProvider>
             </StoreProvider>
           </ThemeProvider>
