@@ -14,7 +14,7 @@ export function Navbar() {
         <ArrowDownUp size="24" />
       </Link>
       <div className="flex gap-2 items-center justify-between col-span-7">
-        <div className="leading-none font-mono font-semibold cursor-default text-sm flex gap-x-2 flex-col md:flex-row gap-0 md:items-center items-start">
+        <div className="leading-none font-semibold cursor-default text-sm flex gap-x-2 flex-col md:flex-row gap-0 md:items-center items-start">
           <span>OptionsWizard</span>
           <span className="text-muted-foreground/90 hidden md:flex items-center gap-2">
             -

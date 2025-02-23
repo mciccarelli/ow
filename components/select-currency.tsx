@@ -125,7 +125,7 @@ export function SelectCurrency() {
                   ) : (
                     <ArrowDownIcon className="h-3 w-3 shrink-0" />
                   )}
-                  <span className="tabular-nums font-mono ml-1">{currencyData?.percentageChange}%</span>
+                  <span className="tabular-nums ml-1">{currencyData?.percentageChange}%</span>
                 </div>
               </div>
 
@@ -137,7 +137,7 @@ export function SelectCurrency() {
                 <div className="flex items-center gap-x-1 text-left">
                   <div></div>
                   <div
-                    className={`flex items-center font-mono pr-2 [.select-trigger_&]:pr-5 ${
+                    className={`flex items-center pr-2 [.select-trigger_&]:pr-5 ${
                       currencyData?.isPositive ? 'text-[hsl(var(--chart-2))]' : 'text-[hsl(var(--chart-1))]'
                     }`}
                   >
