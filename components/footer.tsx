@@ -1,23 +1,8 @@
-'use client'
-
-import { useState } from 'react'
-import { TextScramble } from '@/components'
-
 export function Footer() {
-  const [isTrigger, setIsTrigger] = useState(false)
-
   return (
-    <footer className="w-full flex items-center justify-center p-6 ">
-      <div className="text-xs text-foreground/40 transition-colors hover:text-foreground cursor-default">
-        <TextScramble
-          as="span"
-          speed={0.01}
-          trigger={isTrigger}
-          onHoverStart={() => setIsTrigger(true)}
-          onScrambleComplete={() => setIsTrigger(false)}
-        >
-          Leverage is a tool—use it wisely.
-        </TextScramble>
+    <footer className="w-full min-h-12 grid grid-cols-8 gap-4 px-4">
+      <div className="col-span-8 md:col-span-6 md:col-start-2 xl:col-span-4 xl:col-start-2 text-xs text-foreground/40 transition-colors hover:text-foreground cursor-default">
+        Simulation Only. Not Financial Advice.
       </div>
     </footer>
   )

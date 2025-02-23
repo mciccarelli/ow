@@ -62,11 +62,11 @@ export function Recommended({ recommendedType, ticker, loadingTicker }: Recommen
             <p className="tiny">Instrument Name</p>
             <p>{ticker.result.instrument_name}</p>
           </div>
-          <div>
-            <p className="tiny">Index</p>
-            <p>{ticker.result.option_details?.index}</p>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <p className="tiny">Index</p>
+              <p className="font-semibold text-lg">{ticker.result.option_details?.index}</p>
+            </div>
             <PriceDisplay label="Best Bid" price={Number(ticker.result.best_bid_price)} />
             <PriceDisplay label="Best Ask" price={Number(ticker.result.best_ask_price)} />
           </div>

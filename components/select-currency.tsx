@@ -1,6 +1,7 @@
 'use client'
 
 import useSWR from 'swr'
+import type { CurrencyProps } from '@/types/wizard'
 import { useAtom, useSetAtom } from 'jotai'
 import { resetWizardAtom } from '@/store/wizard'
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react'
@@ -9,7 +10,6 @@ import { fetchAllCurrencies, calculatePercentageChange, formatUSD } from '@/lib'
 import { currencyAtom, lastUpdatedAtom, instrumentsFetcherAtom, tickerAtom } from '@/store/wizard'
 import { Button } from '@/components/ui/button'
 import { RefreshCcw } from 'lucide-react'
-import type { CurrencyProps } from '@/types/wizard'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 export function SelectCurrency() {
@@ -96,33 +96,31 @@ export function SelectCurrency() {
         onValueChange={handleCurrencyChange}
         disabled={isLoading || !!ticker?.result?.instrument_name}
       >
-        <SelectTrigger className="w-full inline-flex items-center select-trigger">
+        <SelectTrigger className="select-trigger [&:not([data-placeholder])>*:first-child]:w-full">
           <SelectValue placeholder="Select a currency" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="select-none">
           {/* Header - Hidden on mobile */}
-          <div className="hidden sm:grid px-2 py-2 grid-cols-currency gap-2 items-center text-xs text-muted-foreground border-b">
+          <div className="hidden sm:grid px-2 py-2 grid-cols-currency tiny text-muted-foreground border-b">
             <div className="pl-5">Currency</div>
-            <div className="text-right">Price</div>
-            <div className="text-right">24hr</div>
-            <div className="text-right">Change</div>
+            <div>Price</div>
+            <div>24hr</div>
+            <div>Change</div>
           </div>
 
           {currencies?.map(currencyData => (
-            <SelectItem
-              key={currencyData.currency}
-              value={currencyData.currency}
-              className="py-2 px-2 w-full [&>[data-radix-select-item-indicator]]:w-full"
-            >
+            <SelectItem key={currencyData.currency} value={currencyData.currency} className="py-2 px-2 [&>*]:w-full">
               {/* Desktop Layout */}
-              <div className="hidden sm:grid grid-cols-currency gap-2 items-center w-full">
-                <div className="font-semibold text-sm pl-5 [.select-trigger_&]:pl-0">{currencyData?.currency}</div>
-                <div className="text-right text-xs font-mono">{currencyData?.formatted_spot_price}</div>
-                <div className="text-right text-xs text-muted-foreground font-mono">
+              <div className="hidden sm:grid grid-cols-currency w-full">
+                <div className="font-semibold text-sm pl-5 [.select-trigger_&]:pl-0 w-[60px]">
+                  {currencyData?.currency}
+                </div>
+                <div className="text-xs font-mono w-[150px]">{currencyData?.formatted_spot_price}</div>
+                <div className="text-xs text-muted-foreground font-mono w-[150px]">
                   {currencyData?.formatted_spot_price_24h}
                 </div>
                 <div
-                  className={`flex items-center justify-end text-xs ${
+                  className={`flex items-center text-xs ${
                     currencyData?.isPositive ? 'text-[hsl(var(--chart-2))]' : 'text-[hsl(var(--chart-1))]'
                   } [.select-trigger_&]:pr-2.5 `}
                 >
@@ -136,11 +134,10 @@ export function SelectCurrency() {
               </div>
 
               {/* Mobile Layout */}
-              <div className="sm:hidden flex items-center space-x-2 text-xs">
-                <span className="font-semibold tabular-nums pl-5 min-w-12">{currencyData?.currency}</span>
+              <div className="sm:hidden flex items-center space-x-1 text-xs">
+                <span className="font-semibold tabular-nums">{currencyData?.currency}</span>
                 <span className="text-muted-foreground">/</span>
                 <span className="font-mono">{currencyData?.formatted_spot_price}</span>
-                <span className="text-muted-foreground">/</span>
                 <div
                   className={`flex items-center font-mono ${
                     currencyData?.isPositive ? 'text-[hsl(var(--chart-2))]' : 'text-[hsl(var(--chart-1))]'
@@ -151,7 +148,9 @@ export function SelectCurrency() {
                   ) : (
                     <ArrowDownIcon className="h-3 w-3 shrink-0" />
                   )}
-                  <span className="ml-1">{currencyData?.percentageChange}%</span>
+                  <span className="ml-1 flex items-center gap-x-1">
+                    {currencyData?.percentageChange}% <span className="text-foreground">(1D)</span>
+                  </span>
                 </div>
               </div>
             </SelectItem>
