@@ -5,7 +5,7 @@ import { useAtom, useSetAtom } from 'jotai'
 import { resetWizardAtom } from '@/store/wizard'
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from '@/components'
-import { fetchAllCurrencies, calculatePercentageChange, formatUSD, DEFAULT_DEDUPE_INTERVAL } from '@/lib'
+import { fetchAllCurrencies, calculatePercentageChange, formatUSD } from '@/lib'
 import { currencyAtom, lastUpdatedAtom, instrumentsFetcherAtom, tickerAtom } from '@/store/wizard'
 import { Button } from '@/components/ui/button'
 import { RefreshCcw } from 'lucide-react'
@@ -24,38 +24,29 @@ export function SelectCurrency() {
     data: currencies,
     error,
     isLoading,
-  } = useSWR<CurrencyProps[]>(
-    'currencies',
-    async () => {
-      try {
-        const { result } = await fetchAllCurrencies()
-        return result
-          .filter(c => ['BTC', 'ETH'].includes(c.currency))
-          .map(c => {
-            const current = Number(c.spot_price)
-            const previous = Number(c.spot_price_24h)
-            return {
-              ...c,
-              formatted_spot_price: formatUSD(current),
-              formatted_spot_price_24h: formatUSD(previous),
-              percentageChange: Number(calculatePercentageChange(current, previous)),
-              isPositive: current > previous,
-            }
-          })
-      } catch (error) {
-        console.error('Error fetching currencies:', error)
-        throw error
-      } finally {
-        setLastUpdated(Date.now())
-      }
-    },
-    {
-      revalidateOnFocus: true,
-      dedupingInterval: DEFAULT_DEDUPE_INTERVAL,
-      keepPreviousData: true,
-      errorRetryCount: 3,
+  } = useSWR<CurrencyProps[]>('currencies', async () => {
+    try {
+      const { result } = await fetchAllCurrencies()
+      return result
+        .filter(c => ['BTC', 'ETH'].includes(c.currency))
+        .map(c => {
+          const current = Number(c.spot_price)
+          const previous = Number(c.spot_price_24h)
+          return {
+            ...c,
+            formatted_spot_price: formatUSD(current),
+            formatted_spot_price_24h: formatUSD(previous),
+            percentageChange: Number(calculatePercentageChange(current, previous)),
+            isPositive: current > previous,
+          }
+        })
+    } catch (error) {
+      console.error('Error fetching currencies:', error)
+      throw error
+    } finally {
+      setLastUpdated(Date.now())
     }
-  )
+  })
 
   const handleCurrencyChange = async (value: string) => {
     const selected = currencies?.find(c => c.currency === value)
@@ -146,17 +137,22 @@ export function SelectCurrency() {
 
               {/* Mobile Layout */}
               <div className="sm:hidden flex items-center space-x-2 text-xs">
-                <span className="font-semibold">{currencyData?.currency}</span>
+                <span className="font-semibold tabular-nums pl-5 min-w-12">{currencyData?.currency}</span>
                 <span className="text-muted-foreground">/</span>
                 <span className="font-mono">{currencyData?.formatted_spot_price}</span>
                 <span className="text-muted-foreground">/</span>
-                <span
-                  className={`font-mono ${
+                <div
+                  className={`flex items-center font-mono ${
                     currencyData?.isPositive ? 'text-[hsl(var(--chart-2))]' : 'text-[hsl(var(--chart-1))]'
                   }`}
                 >
-                  {currencyData?.percentageChange}%
-                </span>
+                  {currencyData?.isPositive ? (
+                    <ArrowUpIcon className="h-3 w-3 shrink-0" />
+                  ) : (
+                    <ArrowDownIcon className="h-3 w-3 shrink-0" />
+                  )}
+                  <span className="ml-1">{currencyData?.percentageChange}%</span>
+                </div>
               </div>
             </SelectItem>
           ))}

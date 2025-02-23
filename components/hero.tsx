@@ -4,22 +4,17 @@ import { useEffect } from 'react'
 import { useSetAtom } from 'jotai'
 import { Button } from '@/components/ui/button'
 import { TextEffect } from '@/components/ui/text-effect'
-import { currencyAtom, expiryAtom, strikeAtom, tickerAtom, recommendedTypeAtom, resetWizardAtom } from '@/store/wizard'
+import { resetWizardAtom } from '@/store/wizard'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
 export function Hero() {
-  const setCurrency = useSetAtom(currencyAtom)
-  const setExpiry = useSetAtom(expiryAtom)
-  const setStrike = useSetAtom(strikeAtom)
-  const setTicker = useSetAtom(tickerAtom)
-  const setRecommendedType = useSetAtom(recommendedTypeAtom)
   const resetWizard = useSetAtom(resetWizardAtom)
 
   // reset all wizard state on mount
   useEffect(() => {
     resetWizard()
-  }, [setCurrency, setExpiry, setStrike, setTicker, setRecommendedType])
+  }, [])
 
   return (
     <div className="relative flex flex-col items-center justify-center overflow-hidden min-h-[calc(100vh-148px)]">
