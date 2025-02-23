@@ -7,7 +7,6 @@ import { format } from 'date-fns/format'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { SelectCurrency, SelectExpiry, SelectStrike, Recommended, Plus } from '@/components'
 import { fetchInstruments, fetchTicker } from '@/lib'
-import { DEFAULT_REFRESH_INTERVAL } from '@/lib/constants'
 import {
   currencyAtom,
   expiryAtom,
@@ -45,27 +44,15 @@ export function Wizard() {
   }, [instrumentName, setTicker])
 
   // fetch ticker data
-  const { data: tickerData, isLoading: loadingTicker } = useSWR(
-    matchingInstrument ? ['ticker', instrumentName] : null,
-    () => {
-      setLastUpdated(Date.now())
-      return fetchTicker({
-        instrument_name: instrumentName!,
-      }).then(data => {
-        setTicker(data)
-        return data
-      })
-    },
-    {
-      refreshInterval: DEFAULT_REFRESH_INTERVAL,
-      revalidateOnFocus: true,
-      keepPreviousData: false,
-      onError: err => {
-        console.error('Ticker fetch error:', err)
-        setTicker(null)
-      },
-    }
-  )
+  const { isLoading: loadingTicker } = useSWR(matchingInstrument ? ['ticker', instrumentName] : null, () => {
+    setLastUpdated(Date.now())
+    return fetchTicker({
+      instrument_name: instrumentName!,
+    }).then(data => {
+      setTicker(data)
+      return data
+    })
+  })
 
   return (
     <div className="px-2 md:px-0">
