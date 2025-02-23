@@ -75,7 +75,11 @@ export function SelectExpiry() {
         </SelectTrigger>
         <SelectContent>
           {availableExpiries.map(expiryData => (
-            <SelectItem key={expiryData?.timestamp.toString()} value={expiryData?.timestamp.toString()}>
+            <SelectItem
+              key={expiryData?.timestamp.toString()}
+              value={expiryData?.timestamp.toString()}
+              className="pl-4"
+            >
               {format(expiryData?.formattedDate, 'MMM dd, yyyy')}
             </SelectItem>
           ))}

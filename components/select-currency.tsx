@@ -102,7 +102,7 @@ export function SelectCurrency() {
         <SelectContent className="select-none">
           {/* Header - Hidden on mobile */}
           <div className="hidden sm:grid px-2 py-2 grid-cols-currency tiny text-muted-foreground border-b">
-            <div className="pl-5">Currency</div>
+            <div>Currency</div>
             <div>Price</div>
             <div>24hr</div>
             <div>Change</div>
@@ -111,16 +111,12 @@ export function SelectCurrency() {
           {currencies?.map(currencyData => (
             <SelectItem key={currencyData.currency} value={currencyData.currency} className="py-2 px-2 [&>*]:w-full">
               {/* Desktop Layout */}
-              <div className="hidden sm:grid grid-cols-currency w-full">
-                <div className="font-semibold text-sm pl-5 [.select-trigger_&]:pl-0 w-[60px]">
-                  {currencyData?.currency}
-                </div>
-                <div className="text-xs font-mono w-[150px]">{currencyData?.formatted_spot_price}</div>
-                <div className="text-xs text-muted-foreground font-mono w-[150px]">
-                  {currencyData?.formatted_spot_price_24h}
-                </div>
+              <div className="hidden sm:grid grid-cols-currency w-full text-xs">
+                <div className="font-semibold text-left">{currencyData?.currency}</div>
+                <div>{currencyData?.formatted_spot_price}</div>
+                <div className="text-muted-foreground">{currencyData?.formatted_spot_price_24h}</div>
                 <div
-                  className={`flex items-center text-xs ${
+                  className={`flex items-center ${
                     currencyData?.isPositive ? 'text-[hsl(var(--chart-2))]' : 'text-[hsl(var(--chart-1))]'
                   } [.select-trigger_&]:pr-2.5 `}
                 >
@@ -134,23 +130,26 @@ export function SelectCurrency() {
               </div>
 
               {/* Mobile Layout */}
-              <div className="sm:hidden flex items-center space-x-1 text-xs">
-                <span className="font-semibold tabular-nums">{currencyData?.currency}</span>
-                <span className="text-muted-foreground">/</span>
-                <span className="font-mono">{currencyData?.formatted_spot_price}</span>
-                <div
-                  className={`flex items-center font-mono ${
-                    currencyData?.isPositive ? 'text-[hsl(var(--chart-2))]' : 'text-[hsl(var(--chart-1))]'
-                  }`}
-                >
-                  {currencyData?.isPositive ? (
-                    <ArrowUpIcon className="h-3 w-3 shrink-0" />
-                  ) : (
-                    <ArrowDownIcon className="h-3 w-3 shrink-0" />
-                  )}
-                  <span className="ml-1 flex items-center gap-x-1">
-                    {currencyData?.percentageChange}% <span className="text-foreground">(1D)</span>
-                  </span>
+              <div className="sm:hidden items-center space-x-2 text-xs w-full flex justify-between">
+                <div className="font-semibold text-left w-full min-w-[50%]">
+                  {currencyData?.currency} / {currencyData?.formatted_spot_price}
+                </div>
+                <div className="flex items-center gap-x-1 text-left">
+                  <div></div>
+                  <div
+                    className={`flex items-center font-mono pr-2 [.select-trigger_&]:pr-5 ${
+                      currencyData?.isPositive ? 'text-[hsl(var(--chart-2))]' : 'text-[hsl(var(--chart-1))]'
+                    }`}
+                  >
+                    {currencyData?.isPositive ? (
+                      <ArrowUpIcon className="h-3 w-3 shrink-0" />
+                    ) : (
+                      <ArrowDownIcon className="h-3 w-3 shrink-0" />
+                    )}
+                    <span className="ml-1 flex items-center gap-x-1">
+                      {currencyData?.percentageChange}% <span className="text-foreground">(1D)</span>
+                    </span>
+                  </div>
                 </div>
               </div>
             </SelectItem>
