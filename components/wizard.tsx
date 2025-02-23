@@ -102,11 +102,11 @@ export function Wizard() {
           {instrumentName && (
             <div className="pt-4 border-t flex justify-between items-center">
               <div>
-                <div className="tiny text-muted-foreground">ID</div>
+                <div className="tiny">ID</div>
                 <div className="text-sm font-semibold">{instrumentName}</div>
               </div>
               <div className="flex flex-col items-end justify-end">
-                <div className="tiny text-muted-foreground">Last Updated</div>
+                <div className="tiny">Last Updated</div>
                 <div className="text-sm font-semibold">{format(lastUpdated as any, 'h:mm:ss a')}</div>
               </div>
             </div>

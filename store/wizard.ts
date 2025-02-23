@@ -14,8 +14,11 @@ export const tickerAtom = atom<PublicGetTickerResponseSchema | null>(null)
 // Atom to store instruments data
 export const instrumentsAtom = atom<ExtendedPublicGetInstrumentsResponseSchema | null>(null)
 
+// Add a new atom to track loading state
+export const isLoadingInstrumentsAtom = atom<boolean>(false)
+
 // Derived atom that fetches instruments when currency changes
-export const instrumentsFetcherAtom = atom<ExtendedPublicGetInstrumentsResponseSchema | null, unknown[], void>(
+export const instrumentsFetcherAtom = atom(
   get => get(instrumentsAtom),
   async (get, set) => {
     const currency = get(currencyAtom)
@@ -26,14 +29,15 @@ export const instrumentsFetcherAtom = atom<ExtendedPublicGetInstrumentsResponseS
     }
 
     try {
+      set(isLoadingInstrumentsAtom, true)
       const data = await fetchInstruments({ currency: currency.currency, expired: false, instrument_type: 'option' })
-      // Format the response data to include unique expiries
-      // and strikes, to be used in the wizard selectors.
       const formattedData = formatInstrumentsData(data)
       set(instrumentsAtom, formattedData)
     } catch (error) {
       console.error('Failed to fetch instruments:', error)
       set(instrumentsAtom, null)
+    } finally {
+      set(isLoadingInstrumentsAtom, false)
     }
   }
 )

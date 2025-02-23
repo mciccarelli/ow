@@ -78,7 +78,7 @@ export function SelectCurrency() {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-xs uppercase font-medium">Currency</label>
+        <label>Currency</label>
         <div className="flex items-center gap-2">
           {isLoading && <span className="text-xs text-muted-foreground">Updating...</span>}
           <Tooltip>

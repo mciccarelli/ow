@@ -73,11 +73,9 @@
   }
   label,
   .tiny {
-    @apply text-xs uppercase tracking-wide;
+    @apply text-xs text-muted-foreground;
   }
 }
-
-
 
 @layer base {
   * {

@@ -1,8 +1,10 @@
 'use client'
 
+import type { ExpiryProps } from '@/types/wizard'
+import { useMemo } from 'react'
 import { useAtom } from 'jotai'
-import { format, set } from 'date-fns'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components'
+import { format } from 'date-fns'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from '@/components'
 import {
   currencyAtom,
   expiryAtom,
@@ -10,9 +12,8 @@ import {
   recommendedTypeAtom,
   instrumentsAtom,
   availableStrikesAtom,
+  isLoadingInstrumentsAtom,
 } from '@/store/wizard'
-import { useMemo } from 'react'
-import { ExpiryProps } from '@/types/wizard'
 
 export function SelectExpiry() {
   const [currency] = useAtom(currencyAtom)
@@ -21,6 +22,7 @@ export function SelectExpiry() {
   const [, setRecommendedType] = useAtom(recommendedTypeAtom)
   const [instruments] = useAtom(instrumentsAtom)
   const [, setAvailableStrikes] = useAtom(availableStrikesAtom)
+  const [isLoading] = useAtom(isLoadingInstrumentsAtom)
 
   const availableExpiries = useMemo<ExpiryProps[]>(
     () => (instruments?.uniqueExpiries as ExpiryProps[])?.filter(Boolean) || [],
@@ -42,10 +44,19 @@ export function SelectExpiry() {
     }
   }
 
-  if (!currency) {
+  if (isLoading) {
+    return (
+      <div className="space-y-2">
+        <label>Expiry Date</label>
+        <Skeleton className="h-10 w-full" />
+      </div>
+    )
+  }
+
+  if (!currency?.currency) {
     return (
       <div className="space-y-2 opacity-50">
-        <label className="text-xs uppercase font-medium">Expiry Date</label>
+        <label>Expiry Date</label>
         <Select disabled>
           <SelectTrigger>
             <SelectValue placeholder="Select currency first" />
@@ -57,9 +68,7 @@ export function SelectExpiry() {
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <label className="text-xs uppercase font-medium">Expiry Date</label>
-      </div>
+      <label>Expiry Date</label>
       <Select value={expiry?.toString()} onValueChange={handleExpiryChange} disabled={!availableExpiries.length}>
         <SelectTrigger>
           <SelectValue placeholder={availableExpiries.length ? 'Select expiry date' : 'No expiry dates available'} />

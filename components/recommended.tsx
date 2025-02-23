@@ -47,23 +47,23 @@ export function Recommended({ recommendedType, ticker, loadingTicker }: Recommen
       }`}
     >
       <CardHeader>
-        <CardTitle className="md:text-xl font-sans font-black leading-none">Recommended Instrument</CardTitle>
+        <CardTitle className="text-2xl">Recommendation</CardTitle>
         <CardDescription className="text-base font-semibold">
           {recommendedType === 'C' ? (
-            <span className="text-[hsl(var(--chart-2))]">Buy Call—Price Expected to go up</span>
+            <span className="text-[hsl(var(--chart-2))]">[Buy Call] ** Price Expected to go up **</span>
           ) : (
-            <span className="text-[hsl(var(--chart-1))]">Buy Put—Price Expected to go down</span>
+            <span className="text-[hsl(var(--chart-1))]">[Buy Put] ** Price Expected to go down **</span>
           )}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex flex-col space-y-4">
           <div>
-            <p className="tiny text-muted-foreground">Instrument Name</p>
+            <p className="tiny">Instrument Name</p>
             <p>{ticker.result.instrument_name}</p>
           </div>
           <div>
-            <p className="tiny text-muted-foreground">Index</p>
+            <p className="tiny">Index</p>
             <p>{ticker.result.option_details?.index}</p>
           </div>
           <div className="grid grid-cols-2 gap-4">

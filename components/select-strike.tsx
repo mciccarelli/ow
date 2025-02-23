@@ -1,10 +1,17 @@
 'use client'
 
-import { useAtom } from 'jotai'
 import { useMemo } from 'react'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components'
-import { currencyAtom, expiryAtom, strikeAtom, recommendedTypeAtom, availableStrikesAtom } from '@/store/wizard'
+import { useAtom } from 'jotai'
 import { formatUSD } from '@/lib'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from '@/components'
+import {
+  currencyAtom,
+  expiryAtom,
+  strikeAtom,
+  recommendedTypeAtom,
+  availableStrikesAtom,
+  isLoadingInstrumentsAtom,
+} from '@/store/wizard'
 
 export function SelectStrike() {
   const [currency] = useAtom(currencyAtom)
@@ -12,6 +19,7 @@ export function SelectStrike() {
   const [strike, setStrike] = useAtom(strikeAtom)
   const [availableStrikes] = useAtom(availableStrikesAtom)
   const [, setRecommendedType] = useAtom(recommendedTypeAtom)
+  const [isLoading] = useAtom(isLoadingInstrumentsAtom)
 
   const isDisabled = useMemo(() => !expiry || !currency?.currency, [expiry, currency?.currency])
 
@@ -27,10 +35,19 @@ export function SelectStrike() {
     }
   }
 
+  if (isLoading) {
+    return (
+      <div className="space-y-2">
+        <label>Strike Price</label>
+        <Skeleton className="h-10 w-full mt-0" />
+      </div>
+    )
+  }
+
   if (!currency?.currency) {
     return (
       <div className="space-y-2 opacity-50">
-        <label className="text-xs uppercase">Strike Price</label>
+        <label>Strike Price</label>
         <Select disabled>
           <SelectTrigger>
             <SelectValue placeholder="Select currency first" />
@@ -44,9 +61,7 @@ export function SelectStrike() {
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <label className="text-xs uppercase">Strike Price</label>
-      </div>
+      <label>Strike Price</label>
       <Select value={strike?.toString()} onValueChange={handleStrikeChange} disabled={isDisabled}>
         <SelectTrigger>
           <SelectValue placeholder="Select strike price" />
