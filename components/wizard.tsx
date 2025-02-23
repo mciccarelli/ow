@@ -7,8 +7,6 @@ import { format } from 'date-fns/format'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { SelectCurrency, SelectExpiry, SelectStrike, Recommended, Plus } from '@/components'
 import { fetchInstruments, fetchTicker } from '@/lib'
-import { DEFAULT_REFRESH_INTERVAL } from '@/lib/constants'
-
 import {
   currencyAtom,
   expiryAtom,
@@ -18,7 +16,6 @@ import {
   instrumentNameAtom,
   tickerAtom,
 } from '@/store/wizard'
-import { motion } from 'framer-motion'
 
 export function Wizard() {
   const [currency] = useAtom(currencyAtom)
@@ -47,43 +44,21 @@ export function Wizard() {
   }, [instrumentName, setTicker])
 
   // fetch ticker data
-  const { data: tickerData, isLoading: loadingTicker } = useSWR(
-    matchingInstrument ? ['ticker', instrumentName] : null,
-    () => {
-      setLastUpdated(Date.now())
-      return fetchTicker({
-        instrument_name: instrumentName!,
-      }).then(data => {
-        setTicker(data)
-        return data
-      })
-    },
-    {
-      refreshInterval: DEFAULT_REFRESH_INTERVAL,
-      revalidateOnFocus: true,
-      keepPreviousData: false,
-      onError: err => {
-        console.error('Ticker fetch error:', err)
-        setTicker(null)
-      },
-    }
-  )
+  const { isLoading: loadingTicker } = useSWR(matchingInstrument ? ['ticker', instrumentName] : null, () => {
+    setLastUpdated(Date.now())
+    return fetchTicker({
+      instrument_name: instrumentName!,
+    }).then(data => {
+      setTicker(data)
+      return data
+    })
+  })
 
   return (
-    <motion.div
-      initial={{ scale: 0.95, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{
-        duration: 0.4,
-        ease: [0.34, 1.56, 0.64, 1], // Spring-like curve
-        delay: 0.1,
-      }}
-      className="px-2 md:px-0"
-    >
+    <div className="px-2 md:px-0">
       <Card className="border border-muted-foreground/15 rounded-none shadow-none relative">
         <Plus className="absolute -top-[13px] -left-[13px]" />
         <Plus className="absolute -bottom-3 -right-3" />
-
         <CardHeader>
           <CardTitle className="text-3xl md:text-4xl font-black font-sans">Options Trading Wizard</CardTitle>
           <CardDescription className="text-base text-muted-foreground font-sans">
@@ -113,6 +88,6 @@ export function Wizard() {
           )}
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
   )
 }
