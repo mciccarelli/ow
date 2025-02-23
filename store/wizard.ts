@@ -1,5 +1,6 @@
 import type { CurrencyProps } from '@/types/wizard'
 import type { ExtendedPublicGetInstrumentsResponseSchema } from '@/types/wizard'
+import type { PublicGetTickerResponseSchema } from '@/types/public.get_ticker'
 import { fetchInstruments, generateInstrumentName, formatInstrumentsData } from '@/lib'
 import { atom } from 'jotai'
 
@@ -8,13 +9,13 @@ export const expiryAtom = atom<string | undefined>(undefined)
 export const strikeAtom = atom<number | undefined>(undefined)
 export const recommendedTypeAtom = atom<'C' | 'P' | undefined>(undefined)
 export const lastUpdatedAtom = atom<number | null>(null)
-export const tickerAtom = atom<any | null>(null)
+export const tickerAtom = atom<PublicGetTickerResponseSchema | null>(null)
 
 // Atom to store instruments data
 export const instrumentsAtom = atom<ExtendedPublicGetInstrumentsResponseSchema | null>(null)
 
 // Derived atom that fetches instruments when currency changes
-export const instrumentsFetcherAtom = atom(
+export const instrumentsFetcherAtom = atom<ExtendedPublicGetInstrumentsResponseSchema | null, unknown[], void>(
   get => get(instrumentsAtom),
   async (get, set) => {
     const currency = get(currencyAtom)
@@ -37,7 +38,7 @@ export const instrumentsFetcherAtom = atom(
   }
 )
 
-export const instrumentNameAtom = atom(get => {
+export const instrumentNameAtom = atom<string | null>(get => {
   const currency = get(currencyAtom)
   const expiry = get(expiryAtom)
   const strike = get(strikeAtom)
@@ -53,7 +54,7 @@ export const instrumentNameAtom = atom(get => {
 
 export const availableStrikesAtom = atom<number[] | null>(null)
 
-export const resetWizardAtom = atom(null, (get, set) => {
+export const resetWizardAtom = atom<[], [], void>([], (get, set) => {
   set(currencyAtom, undefined)
   set(expiryAtom, undefined)
   set(strikeAtom, undefined)

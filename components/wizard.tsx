@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { SelectCurrency, SelectExpiry, SelectStrike, Recommended, Plus } from '@/components'
 import { fetchInstruments, fetchTicker } from '@/lib'
 import { DEFAULT_REFRESH_INTERVAL } from '@/lib/constants'
+
 import {
   currencyAtom,
   expiryAtom,
