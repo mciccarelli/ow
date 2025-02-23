@@ -17,7 +17,7 @@ export function Hero() {
   }, [])
 
   return (
-    <div className="relative flex flex-col items-center md:items-start text-center md:text-left overflow-hidden gap-y-4">
+    <div className="relative flex flex-col items-center md:items-start text-center md:text-left overflow-hidden gap-y-6">
       <div className="flex flex-col gap-y-2">
         <TextEffect
           className="text-sm font-semibold tracking-widest uppercase text-muted-foreground"
@@ -31,7 +31,7 @@ export function Hero() {
           per="line"
           as="h1"
           segmentWrapperClassName="overflow-hidden block"
-          className="text-3xl font-black leading-none sm:text-5xl md:text-6xl lg:text-7xl"
+          className="text-4xl font-black leading-none sm:text-5xl md:text-6xl lg:text-7xl"
           variants={{
             container: {
               hidden: { opacity: 0 },
