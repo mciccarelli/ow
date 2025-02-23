@@ -20,7 +20,7 @@ export function Hero() {
         <h5 className="text-sm font-semibold tracking-widest uppercase text-muted-foreground">
           Smarter Crypto Options
         </h5>
-        <h1 className="text-4xl font-black leading-none sm:text-5xl md:text-6xl lg:text-7xl">
+        <h1 className="text-4xl font-black leading-none sm:text-5xl md:text-6xl lg:text-7xl text-balance">
           Master the Market With Precision
         </h1>
       </div>
