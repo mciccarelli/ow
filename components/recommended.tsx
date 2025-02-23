@@ -42,11 +42,11 @@ export function Recommended({ recommendedType, ticker, loadingTicker }: Recommen
   // render success state with appropriate color scheme
   return (
     <Card
-      className={`shadow-none rounded-none ${
+      className={`shadow-none rounded-none gap-y-2 ${
         recommendedType === 'C' ? 'bg-[hsl(var(--chart-2))]/10' : 'bg-[hsl(var(--chart-1))]/10'
       }`}
     >
-      <CardHeader>
+      <CardHeader className="p-4">
         <CardTitle className="text-2xl">Recommendation</CardTitle>
         <CardDescription className="text-base font-semibold">
           {recommendedType === 'C' ? (
@@ -56,7 +56,7 @@ export function Recommended({ recommendedType, ticker, loadingTicker }: Recommen
           )}
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 p-4">
         <div className="flex flex-col space-y-4">
           <div>
             <p className="tiny">Instrument Name</p>

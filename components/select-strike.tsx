@@ -70,7 +70,7 @@ export function SelectStrike() {
           {availableStrikes &&
             (availableStrikes?.length ?? 0) > 0 &&
             availableStrikes?.map((strike: number) => (
-              <SelectItem key={strike} value={strike.toString()}>
+              <SelectItem key={strike} value={strike.toString()} className="pl-4">
                 {formatUSD(strike)}
               </SelectItem>
             ))}
