@@ -2,23 +2,17 @@
 
 import useSWR from 'swr'
 import type { CurrencyProps } from '@/types/wizard'
-import { useAtom, useSetAtom } from 'jotai'
-import { resetWizardAtom } from '@/store/wizard'
+import { useAtom } from 'jotai'
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from '@/components'
 import { fetchAllCurrencies, calculatePercentageChange, formatUSD } from '@/lib'
-import { currencyAtom, lastUpdatedAtom, instrumentsFetcherAtom, tickerAtom } from '@/store/wizard'
-import { Button } from '@/components/ui/button'
-import { RefreshCcw } from 'lucide-react'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { currencyAtom, lastUpdatedAtom, instrumentsFetcherAtom } from '@/store/wizard'
 
 export function SelectCurrency() {
   const [, setCurrency] = useAtom(currencyAtom)
   const [, setLastUpdated] = useAtom(lastUpdatedAtom)
   const [, fetchInstruments] = useAtom(instrumentsFetcherAtom)
-  const [ticker] = useAtom(tickerAtom)
   const [currency] = useAtom(currencyAtom)
-  const resetWizard = useSetAtom(resetWizardAtom)
 
   const {
     data: currencies,
@@ -54,10 +48,6 @@ export function SelectCurrency() {
     await fetchInstruments() // Trigger instruments fetch when currency changes
   }
 
-  const handleReset = () => {
-    resetWizard()
-  }
-
   if (error) {
     return <div className="text-sm text-destructive">Failed to load currencies. Please try again later.</div>
   }
@@ -70,32 +60,9 @@ export function SelectCurrency() {
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <label>Currency</label>
-        <div className="flex items-center gap-2">
-          {isLoading && <span className="text-xs text-muted-foreground">Updating...</span>}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6"
-                onClick={handleReset}
-                disabled={isLoading || !ticker?.result?.instrument_name}
-              >
-                <RefreshCcw className="h-3 w-3" />
-                <span className="sr-only">Reset selections</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className="bg-muted-foreground/10 text-foreground">
-              <div className="tiny">Reset</div>
-            </TooltipContent>
-          </Tooltip>
-        </div>
+        {isLoading && <span className="text-xs text-muted-foreground">Updating...</span>}
       </div>
-      <Select
-        value={currency?.currency || ''} // Add empty string fallback
-        onValueChange={handleCurrencyChange}
-        disabled={isLoading || !!ticker?.result?.instrument_name}
-      >
+      <Select value={currency?.currency || ''} onValueChange={handleCurrencyChange} disabled={isLoading}>
         <SelectTrigger className="select-trigger [&:not([data-placeholder])>*:first-child]:w-full">
           <SelectValue placeholder="Select a currency" />
         </SelectTrigger>

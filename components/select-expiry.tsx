@@ -8,7 +8,7 @@ import {
   currencyAtom,
   expiryAtom,
   strikeAtom,
-  recommendedTypeAtom,
+  instrumentNameAtom,
   instrumentsAtom,
   isLoadingInstrumentsAtom,
 } from '@/store/wizard'
@@ -17,7 +17,7 @@ export function SelectExpiry() {
   const [currency] = useAtom(currencyAtom)
   const [expiry, setExpiry] = useAtom(expiryAtom)
   const [, setStrike] = useAtom(strikeAtom)
-  const [, setRecommendedType] = useAtom(recommendedTypeAtom)
+  const [, setIntrumentName] = useAtom(instrumentNameAtom)
   const [instruments] = useAtom(instrumentsAtom)
   const [isLoading] = useAtom(isLoadingInstrumentsAtom)
   const [availableExpiries] = useAtom(availableExpiriesAtom)
@@ -25,7 +25,6 @@ export function SelectExpiry() {
   const handleExpiryChange = (value: string) => {
     // Reset dependent values first
     setStrike(undefined)
-    setRecommendedType(undefined)
 
     try {
       // Set new expiry
@@ -37,6 +36,10 @@ export function SelectExpiry() {
 
       if (selectedInstrument?.option_details?.strike) {
         setStrike(Number(selectedInstrument.option_details.strike))
+      }
+
+      if (selectedInstrument?.instrument_name) {
+        setIntrumentName(selectedInstrument?.instrument_name)
       }
     } catch (error) {
       console.error('Failed to set expiry:', error)

@@ -3,7 +3,10 @@
 import { useEffect } from 'react'
 import { useSetAtom } from 'jotai'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+
 import { resetWizardAtom } from '@/store/wizard'
+
 import Link from 'next/link'
 
 export function Hero() {
@@ -16,10 +19,10 @@ export function Hero() {
 
   return (
     <div className="relative flex flex-col items-center md:items-start text-center md:text-left overflow-hidden gap-y-6">
-      <div className="flex flex-col gap-y-2">
-        <h5 className="text-sm font-semibold tracking-widest uppercase text-muted-foreground">
-          Smarter Crypto Options
-        </h5>
+      <div className="flex flex-col gap-y-4">
+        <div className="flex">
+          <Badge variant="secondary">Smarter Crypto Options</Badge>
+        </div>
         <h1 className="text-4xl font-black leading-none sm:text-5xl md:text-6xl lg:text-7xl text-balance">
           Master the Market With Precision
         </h1>

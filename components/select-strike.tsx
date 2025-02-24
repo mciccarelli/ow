@@ -8,7 +8,7 @@ import {
   currencyAtom,
   expiryAtom,
   strikeAtom,
-  recommendedTypeAtom,
+  instrumentNameAtom,
   availableStrikesAtom,
   isLoadingInstrumentsAtom,
 } from '@/store/wizard'
@@ -18,8 +18,8 @@ export function SelectStrike() {
   const [expiry] = useAtom(expiryAtom)
   const [strike, setStrike] = useAtom(strikeAtom)
   const [availableStrikes] = useAtom(availableStrikesAtom)
-  const [, setRecommendedType] = useAtom(recommendedTypeAtom)
   const [isLoading] = useAtom(isLoadingInstrumentsAtom)
+  const [, setInstrumentName] = useAtom(instrumentNameAtom)
 
   const isDisabled = useMemo(() => !expiry || !currency?.currency, [expiry, currency?.currency])
 
@@ -27,11 +27,14 @@ export function SelectStrike() {
     const strikeValue = Number(value)
     setStrike(strikeValue)
 
-    if (currency?.spot_price) {
-      const spotPrice = Number(currency.spot_price)
-      if (!isNaN(spotPrice)) {
-        setRecommendedType(strikeValue > spotPrice ? 'C' : 'P')
-      }
+    if (currency?.currency && expiry) {
+      const formattedDate = new Date(Number(expiry) * 1000).toISOString().slice(0, 10).replace(/-/g, '')
+      // Determine if this is a call or put option
+      const instrumentType = strikeValue > Number(currency?.spot_price) ? 'C' : 'P'
+      // Generate new instrument name
+      const newInstrumentName = `${currency.currency}-${formattedDate}-${strikeValue}-${instrumentType}`
+      // Update instrument name
+      setInstrumentName(newInstrumentName)
     }
   }
 

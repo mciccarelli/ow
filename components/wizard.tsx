@@ -1,30 +1,18 @@
 'use client'
 
 import useSWR from 'swr'
-import { useMemo, useEffect } from 'react'
+import { useMemo } from 'react'
 import { useAtom } from 'jotai'
-import { format } from 'date-fns/format'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { SelectCurrency, SelectExpiry, SelectStrike, Recommended, Plus } from '@/components'
+import { currencyAtom, expiryAtom, strikeAtom, instrumentNameAtom } from '@/store/wizard'
 import { fetchInstruments, fetchTicker } from '@/lib'
-import {
-  currencyAtom,
-  expiryAtom,
-  strikeAtom,
-  recommendedTypeAtom,
-  lastUpdatedAtom,
-  instrumentNameAtom,
-  tickerAtom,
-} from '@/store/wizard'
 
 export function Wizard() {
   const [currency] = useAtom(currencyAtom)
   const [expiry] = useAtom(expiryAtom)
   const [strike] = useAtom(strikeAtom)
-  const [recommendedType] = useAtom(recommendedTypeAtom)
-  const [lastUpdated, setLastUpdated] = useAtom(lastUpdatedAtom)
   const [instrumentName] = useAtom(instrumentNameAtom)
-  const [ticker, setTicker] = useAtom(tickerAtom)
 
   // fetch instruments data
   const { data: instruments } = useSWR(currency?.currency ? ['instruments', currency.currency] : null, () =>
@@ -35,24 +23,14 @@ export function Wizard() {
   const matchingInstrument = useMemo(() => {
     if (!instruments?.result || !expiry || !strike) return null
 
-    return instruments.result.find(i => i.instrument_name === instrumentName)
-  }, [instruments?.result, currency?.currency, expiry, strike, recommendedType])
-
-  // reset ticker when instrument name / id changes
-  useEffect(() => {
-    setTicker(null)
-  }, [instrumentName, setTicker])
+    return instruments.result.find((i: { instrument_name: string | undefined }) => i.instrument_name === instrumentName)
+  }, [instruments?.result, currency?.currency, expiry, strike])
 
   // fetch ticker data
-  const { isLoading: loadingTicker } = useSWR(matchingInstrument ? ['ticker', instrumentName] : null, () => {
-    setLastUpdated(Date.now())
-    return fetchTicker({
-      instrument_name: instrumentName!,
-    }).then(data => {
-      setTicker(data)
-      return data
-    })
-  })
+  const { data: tickerData, isLoading: loadingTicker } = useSWR(
+    matchingInstrument ? ['ticker', instrumentName] : null,
+    () => fetchTicker({ instrument_name: instrumentName! })
+  )
 
   return (
     <div className="px-2 md:px-0">
@@ -71,20 +49,14 @@ export function Wizard() {
             <SelectExpiry />
             <SelectStrike />
           </div>
-          {currency && expiry && strike && recommendedType && (
-            <Recommended recommendedType={recommendedType} ticker={ticker} loadingTicker={loadingTicker} />
-          )}
-          {instrumentName && (
-            <div className="pt-4 border-t flex justify-between items-center">
-              <div>
-                <div className="tiny">ID</div>
-                <div className="text-sm font-semibold">{instrumentName}</div>
-              </div>
-              <div className="flex flex-col items-end justify-end">
-                <div className="tiny">Last Updated</div>
-                <div className="text-sm font-semibold">{format(lastUpdated as any, 'h:mm:ss a')}</div>
-              </div>
-            </div>
+          {currency && expiry && strike && instrumentName && (
+            <>
+              <Recommended
+                ticker={tickerData!}
+                loadingTicker={loadingTicker}
+                recommendedType={instrumentName?.slice(-1) as 'P' | 'C'}
+              />
+            </>
           )}
         </CardContent>
       </Card>
