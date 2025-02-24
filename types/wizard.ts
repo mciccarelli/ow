@@ -3,7 +3,6 @@ import { PublicGetInstrumentsResponseSchema } from '@/types/public.get_instrumen
 import { PublicGetTickerResponseSchema } from '@/types/public.get_ticker'
 
 export interface ExtendedPublicGetInstrumentsResponseSchema extends PublicGetInstrumentsResponseSchema {
-  uniqueExpiries?: unknown[]
   strikesByExpiry?: Record<number, number[]>
 }
 
@@ -18,11 +17,6 @@ export interface CurrencyProps extends CurrencyResponseSchema {
 export interface StrikeProps {
   strike: number
   instrument_name: string
-}
-
-export interface ExpiryProps {
-  timestamp: number
-  formattedDate: Date
 }
 
 export interface RecommendedProps {
