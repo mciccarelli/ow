@@ -4,8 +4,8 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { SWRConfig } from 'swr'
 import { Provider as StoreProvider } from 'jotai'
-import { DEFAULT_REFRESH_INTERVAL, DEFAULT_DEDUPE_INTERVAL } from '@/lib/constants'
 import { ThemeProvider, TooltipProvider, Navbar, Footer } from '@/components'
+// import { DEFAULT_REFRESH_INTERVAL, DEFAULT_DEDUPE_INTERVAL } from '@/lib/constants'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -34,12 +34,12 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <SWRConfig
-          value={{
-            refreshInterval: DEFAULT_REFRESH_INTERVAL,
-            revalidateOnFocus: true,
-            revalidateOnReconnect: true,
-            dedupingInterval: DEFAULT_DEDUPE_INTERVAL,
-          }}
+        // value={{
+        //   refreshInterval: DEFAULT_REFRESH_INTERVAL,
+        //   revalidateOnFocus: true,
+        //   revalidateOnReconnect: true,
+        //   dedupingInterval: DEFAULT_DEDUPE_INTERVAL,
+        // }}
         >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <StoreProvider>

@@ -1,5 +1,6 @@
-// Format an epoch timestamp into a string
+import { format } from 'date-fns'
+
+// Format a timestamp into a human-readable date
 export default function formatDate(ts: number): string {
-  const date = new Date(ts * 1000)
-  return date.toLocaleString('default', { month: 'short', day: '2-digit' })
+  return format(new Date(ts * 1000), 'MMM dd, yyyy')
 }

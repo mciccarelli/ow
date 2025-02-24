@@ -1,17 +1,15 @@
 'use client'
 
-import type { ExpiryProps } from '@/types/wizard'
-import { useMemo } from 'react'
 import { useAtom } from 'jotai'
-import { format } from 'date-fns'
+import { formatDate } from '@/lib'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from '@/components'
 import {
+  availableExpiriesAtom,
   currencyAtom,
   expiryAtom,
   strikeAtom,
   recommendedTypeAtom,
   instrumentsAtom,
-  availableStrikesAtom,
   isLoadingInstrumentsAtom,
 } from '@/store/wizard'
 
@@ -21,26 +19,27 @@ export function SelectExpiry() {
   const [, setStrike] = useAtom(strikeAtom)
   const [, setRecommendedType] = useAtom(recommendedTypeAtom)
   const [instruments] = useAtom(instrumentsAtom)
-  const [, setAvailableStrikes] = useAtom(availableStrikesAtom)
   const [isLoading] = useAtom(isLoadingInstrumentsAtom)
-
-  const availableExpiries = useMemo<ExpiryProps[]>(
-    () => (instruments?.uniqueExpiries as ExpiryProps[])?.filter(Boolean) || [],
-    [instruments?.uniqueExpiries]
-  )
+  const [availableExpiries] = useAtom(availableExpiriesAtom)
 
   const handleExpiryChange = (value: string) => {
-    // Reset dependent values
+    // Reset dependent values first
     setStrike(undefined)
     setRecommendedType(undefined)
-    // Set new expiry
-    setExpiry(value)
-    // Get strikes for this expiry
-    if (instruments?.strikesByExpiry) {
-      const strikesForExpiry = instruments.strikesByExpiry[Number(value)] || []
-      setAvailableStrikes(strikesForExpiry)
-    } else {
-      setAvailableStrikes(null)
+
+    try {
+      // Set new expiry
+      setExpiry(value)
+      // Find matching instrument for this expiry and get its strike price
+      const selectedInstrument = instruments?.result?.find(
+        instrument => instrument.option_details?.expiry === Number(value)
+      )
+
+      if (selectedInstrument?.option_details?.strike) {
+        setStrike(Number(selectedInstrument.option_details.strike))
+      }
+    } catch (error) {
+      console.error('Failed to set expiry:', error)
     }
   }
 
@@ -74,13 +73,9 @@ export function SelectExpiry() {
           <SelectValue placeholder={availableExpiries.length ? 'Select expiry date' : 'No expiry dates available'} />
         </SelectTrigger>
         <SelectContent>
-          {availableExpiries.map(expiryData => (
-            <SelectItem
-              key={expiryData?.timestamp.toString()}
-              value={expiryData?.timestamp.toString()}
-              className="pl-4"
-            >
-              {format(expiryData?.formattedDate, 'MMM dd, yyyy')}
+          {availableExpiries.map((expiry, idx) => (
+            <SelectItem key={idx} value={expiry.toString()} className="pl-4">
+              {formatDate(expiry)}
             </SelectItem>
           ))}
         </SelectContent>
