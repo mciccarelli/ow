@@ -1,21 +1,31 @@
 import type { CurrencyProps } from '@/types/wizard'
 import type { ExtendedPublicGetInstrumentsResponseSchema } from '@/types/wizard'
-import { fetchInstruments, getUniqueSortedNumbers } from '@/lib'
+import { PublicGetTickerResponseSchema } from '@/types/public.get_ticker'
+import {
+  fetchInstruments,
+  fetchTicker,
+  getUniqueSortedNumbers,
+  fetchAllCurrencies,
+  calculatePercentageChange,
+  formatUSD,
+} from '@/lib'
 import { atom } from 'jotai'
 
 export const currencyAtom = atom<CurrencyProps | undefined>(undefined)
-export const expiryAtom = atom<string | undefined>(undefined)
-export const strikeAtom = atom<number | undefined>(undefined)
-export const instrumentNameAtom = atom<string | undefined>(undefined)
-export const lastUpdatedAtom = atom<number | null>(null)
+export const currenciesAtom = atom<CurrencyProps[] | null>(null)
+export const isLoadingCurrenciesAtom = atom<boolean>(false)
 
-// Atom to store instruments data
 export const instrumentsAtom = atom<ExtendedPublicGetInstrumentsResponseSchema | null>(null)
-
-// Add a new atom to track loading state
 export const isLoadingInstrumentsAtom = atom<boolean>(false)
 
-// New atoms for selector options
+export const tickerAtom = atom<PublicGetTickerResponseSchema | null>(null)
+export const isLoadingTickerAtom = atom<boolean>(false)
+
+export const expiryAtom = atom<string | undefined>(undefined)
+export const strikeAtom = atom<string | undefined>(undefined)
+
+export const instrumentNameAtom = atom<string | undefined>(undefined)
+
 export const availableExpiriesAtom = atom<number[]>(get => {
   const instruments = get(instrumentsAtom)
   if (!instruments?.result) return []
@@ -29,17 +39,14 @@ export const availableExpiriesAtom = atom<number[]>(get => {
 
 export const availableStrikesAtom = atom<number[]>(get => {
   const instruments = get(instrumentsAtom)
-  const selectedExpiry = get(expiryAtom)
-  if (!instruments?.strikesByExpiry || !selectedExpiry) return []
 
-  // Get strikes array for selected expiry timestamp
-  const strikesForExpiry = instruments.strikesByExpiry[Number(selectedExpiry)] || []
-
-  // Sort strikes numerically
-  return strikesForExpiry.sort((a, b) => a - b)
+  // Combine unique strikes from puts and calls
+  return getUniqueSortedNumbers(
+    [...(instruments?.optionsByType?.calls.strikes || []), ...(instruments?.optionsByType?.puts?.strikes || [])],
+    Number
+  )
 })
 
-// Derived atom that fetches instruments when currency changes
 export const instrumentsFetcherAtom = atom(
   get => get(instrumentsAtom),
   async (get, set) => {
@@ -47,39 +54,127 @@ export const instrumentsFetcherAtom = atom(
 
     if (!currency?.currency) {
       set(instrumentsAtom, null)
-      set(expiryAtom, undefined) // Clear expiry selection
-      set(strikeAtom, undefined) // Clear strike selection
       return
     }
 
     try {
       set(isLoadingInstrumentsAtom, true)
-      const data = await fetchInstruments({ currency: currency.currency, expired: false, instrument_type: 'option' })
+      const data = await fetchInstruments({
+        currency: currency.currency,
+        expired: false,
+        instrument_type: 'option',
+      })
 
-      // Get unique expiry timestamps and sort numerically
-      const expiryTimestamps = getUniqueSortedNumbers(
-        data?.result.map(i => i.option_details.expiry),
+      // Separate instruments into puts and calls
+      const putInstruments = data.result.filter(i => i.instrument_name.endsWith('P'))
+      const callInstruments = data.result.filter(i => i.instrument_name.endsWith('C'))
+
+      // Get unique expiries and strikes for puts
+      const putExpiries = getUniqueSortedNumbers(
+        putInstruments.map(i => i.option_details?.expiry),
         Number
       )
+      const putStrikes = [...new Set(putInstruments.map(i => Number(i.option_details?.strike)))].sort((a, b) => a - b)
 
-      // Create mapping of expiries to their available strikes
-      const strikesByExpiry = expiryTimestamps.reduce((acc, expiry) => {
-        // Filter instruments for this expiry and get their strikes
-        const strikesForExpiry = data?.result
-          .filter(i => Number(i.option_details.expiry) === expiry)
-          .map(i => Number(i.option_details.strike))
-        // Remove duplicates and sort
-        acc[expiry] = [...new Set(strikesForExpiry)].sort((a, b) => a - b)
-        return acc
-      }, {} as Record<number, number[]>)
+      // Get unique expiries and strikes for calls
+      const callExpiries = getUniqueSortedNumbers(
+        callInstruments.map(i => i.option_details?.expiry),
+        Number
+      )
+      const callStrikes = [...new Set(callInstruments.map(i => Number(i.option_details?.strike)))].sort((a, b) => a - b)
 
-      // Update instruments atom with formatted data
-      set(instrumentsAtom, { ...data, strikesByExpiry })
+      // Create organized data structure
+      const optionsByType = {
+        puts: {
+          expiries: putExpiries,
+          strikes: putStrikes,
+          instruments: putInstruments,
+        },
+        calls: {
+          expiries: callExpiries,
+          strikes: callStrikes,
+          instruments: callInstruments,
+        },
+      }
+
+      // Get the spot price and determine if the currency is bullish
+      const spotPrice = Number(currency.spot_price)
+      const isBullish = Number(currency.spot_price_24h) > spotPrice
+
+      // Find the closest strike price
+      const closestStrike = (isBullish ? callStrikes : putStrikes).reduce((prev, curr) =>
+        Math.abs(curr - spotPrice) < Math.abs(prev - spotPrice) ? curr : prev
+      )
+
+      // Find the instrument with the closest strike price
+      const closestInstrument = (isBullish ? callInstruments : putInstruments).find(
+        instrument => Number(instrument.option_details?.strike) === closestStrike
+      )
+
+      // Set the expiry and strike atoms based on the closest instrument
+      if (closestInstrument) {
+        set(expiryAtom, String(closestInstrument.option_details?.expiry))
+        set(strikeAtom, String(closestInstrument.option_details?.strike))
+        set(instrumentNameAtom, closestInstrument.instrument_name)
+      }
+
+      set(instrumentsAtom, { ...data, optionsByType })
     } catch (error) {
-      console.error('Failed to fetch instruments:', error)
+      console.error('Error fetching instruments:', error)
       set(instrumentsAtom, null)
     } finally {
       set(isLoadingInstrumentsAtom, false)
+    }
+  }
+)
+
+export const tickerFetcherAtom = atom(
+  get => get(tickerAtom),
+  async (get, set) => {
+    const instrumentName = get(instrumentNameAtom)
+
+    if (!instrumentName) {
+      set(tickerAtom, null)
+      return
+    }
+
+    try {
+      set(isLoadingTickerAtom, true)
+      const data = await fetchTicker({ instrument_name: instrumentName })
+      set(tickerAtom, data)
+    } catch (error) {
+      console.error('Error fetching ticker:', error)
+      set(tickerAtom, null)
+    } finally {
+      set(isLoadingTickerAtom, false)
+    }
+  }
+)
+
+export const currenciesFetcherAtom = atom(
+  get => get(currenciesAtom),
+  async (get, set) => {
+    set(isLoadingCurrenciesAtom, true)
+    try {
+      const { result } = await fetchAllCurrencies()
+      const formattedCurrencies = result
+        .filter(c => ['BTC', 'ETH'].includes(c.currency))
+        .map(c => {
+          const current = Number(c.spot_price)
+          const previous = Number(c.spot_price_24h)
+          return {
+            ...c,
+            formatted_spot_price: formatUSD(current),
+            formatted_spot_price_24h: formatUSD(previous),
+            percentageChange: Number(calculatePercentageChange(current, previous)),
+            isPositive: current > previous,
+          }
+        })
+      set(currenciesAtom, formattedCurrencies)
+    } catch (error) {
+      console.error('Error fetching currencies:', error)
+    } finally {
+      set(isLoadingCurrenciesAtom, false)
     }
   }
 )

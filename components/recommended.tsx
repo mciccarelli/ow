@@ -1,14 +1,22 @@
 'use client'
 
-import type { RecommendedProps } from '@/types/wizard'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { PriceDisplay } from '@/components'
+import { useAtom } from 'jotai'
 import { Loader2 } from 'lucide-react'
+import { PriceDisplay } from '@/components'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { isLoadingInstrumentsAtom, isLoadingTickerAtom, tickerFetcherAtom } from '@/store/wizard'
 import Link from 'next/link'
 
-export function Recommended({ recommendedType, ticker, loadingTicker }: RecommendedProps) {
+export function Recommended() {
+  const [ticker] = useAtom(tickerFetcherAtom)
+  const [isLoadingIntruments] = useAtom(isLoadingInstrumentsAtom)
+  const [isLoadingTicker] = useAtom(isLoadingTickerAtom)
+  const recommendedType = ticker?.result?.instrument_name?.slice(-1) as 'P' | 'C'
+
+  if (!ticker || isLoadingIntruments) return null
+
   // render loading state
-  if (loadingTicker) {
+  if (isLoadingTicker) {
     return (
       <Card className="shadow-none rounded-none bg-muted">
         <CardContent className="py-6">
