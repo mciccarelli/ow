@@ -40,11 +40,8 @@ export const availableExpiriesAtom = atom<number[]>(get => {
 export const availableStrikesAtom = atom<number[]>(get => {
   const instruments = get(instrumentsAtom)
 
-  // Combine unique strikes from puts and calls
-  return getUniqueSortedNumbers(
-    [...(instruments?.optionsByType?.calls.strikes || []), ...(instruments?.optionsByType?.puts?.strikes || [])],
-    Number
-  )
+  // combine unique strikes by expiry
+  return getUniqueSortedNumbers(instruments?.strikesByExpiry?.[Number(get(expiryAtom))] || [], Number)
 })
 
 export const instrumentsFetcherAtom = atom(
@@ -118,7 +115,20 @@ export const instrumentsFetcherAtom = atom(
         set(instrumentNameAtom, closestInstrument.instrument_name)
       }
 
-      set(instrumentsAtom, { ...data, optionsByType })
+      // break out all strike prices by expiry
+      const strikesByExpiry = data.result.reduce((acc, instrument) => {
+        const expiry = instrument.option_details?.expiry
+        const strike = Number(instrument.option_details?.strike)
+        if (expiry && strike) {
+          if (!acc[expiry]) {
+            acc[expiry] = []
+          }
+          acc[expiry].push(strike)
+        }
+        return acc
+      }, {} as Record<number, number[]>)
+
+      set(instrumentsAtom, { ...data, optionsByType, strikesByExpiry })
     } catch (error) {
       console.error('Error fetching instruments:', error)
       set(instrumentsAtom, null)

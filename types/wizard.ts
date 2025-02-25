@@ -12,6 +12,7 @@ export interface ExtendedPublicGetInstrumentsResponseSchema extends PublicGetIns
     puts: OptionTypeData
     calls: OptionTypeData
   }
+  strikesByExpiry?: Record<number, number[]>
 }
 
 export interface CurrencyProps extends CurrencyResponseSchema {
