@@ -1,36 +1,20 @@
 'use client'
 
-import useSWR from 'swr'
-import { useMemo } from 'react'
+import { useEffect } from 'react'
 import { useAtom } from 'jotai'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { SelectCurrency, SelectExpiry, SelectStrike, Recommended, Plus } from '@/components'
-import { currencyAtom, expiryAtom, strikeAtom, instrumentNameAtom } from '@/store/wizard'
-import { fetchInstruments, fetchTicker } from '@/lib'
+import { instrumentNameAtom, tickerFetcherAtom } from '@/store/wizard'
 
 export function Wizard() {
-  const [currency] = useAtom(currencyAtom)
-  const [expiry] = useAtom(expiryAtom)
-  const [strike] = useAtom(strikeAtom)
   const [instrumentName] = useAtom(instrumentNameAtom)
+  const [, fetchTicker] = useAtom(tickerFetcherAtom)
 
-  // fetch instruments data
-  const { data: instruments } = useSWR(currency?.currency ? ['instruments', currency.currency] : null, () =>
-    fetchInstruments({ currency: currency?.currency!, expired: false, instrument_type: 'option' })
-  )
-
-  // find matching instrument
-  const matchingInstrument = useMemo(() => {
-    if (!instruments?.result || !expiry || !strike) return null
-
-    return instruments.result.find((i: { instrument_name: string | undefined }) => i.instrument_name === instrumentName)
-  }, [instruments?.result, currency?.currency, expiry, strike])
-
-  // fetch ticker data
-  const { data: tickerData, isLoading: loadingTicker } = useSWR(
-    matchingInstrument ? ['ticker', instrumentName] : null,
-    () => fetchTicker({ instrument_name: instrumentName! })
-  )
+  useEffect(() => {
+    if (instrumentName) {
+      fetchTicker()
+    }
+  }, [instrumentName])
 
   return (
     <div className="px-2 md:px-0">
@@ -49,15 +33,7 @@ export function Wizard() {
             <SelectExpiry />
             <SelectStrike />
           </div>
-          {currency && expiry && strike && instrumentName && (
-            <>
-              <Recommended
-                ticker={tickerData!}
-                loadingTicker={loadingTicker}
-                recommendedType={instrumentName?.slice(-1) as 'P' | 'C'}
-              />
-            </>
-          )}
+          <Recommended />
         </CardContent>
       </Card>
     </div>

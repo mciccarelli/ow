@@ -1,9 +1,17 @@
 import { CurrencyResponseSchema } from '@/types/public.get_all_currencies'
 import { PublicGetInstrumentsResponseSchema } from '@/types/public.get_instruments'
-import { PublicGetTickerResponseSchema } from '@/types/public.get_ticker'
+
+export interface OptionTypeData {
+  expiries: number[]
+  strikes: number[]
+  instruments: any[]
+}
 
 export interface ExtendedPublicGetInstrumentsResponseSchema extends PublicGetInstrumentsResponseSchema {
-  strikesByExpiry?: Record<number, number[]>
+  optionsByType?: {
+    puts: OptionTypeData
+    calls: OptionTypeData
+  }
 }
 
 export interface CurrencyProps extends CurrencyResponseSchema {
@@ -11,16 +19,4 @@ export interface CurrencyProps extends CurrencyResponseSchema {
   formatted_spot_price_24h?: string
   percentageChange?: number
   isPositive?: boolean
-  lastUpdated?: string
-}
-
-export interface StrikeProps {
-  strike: number
-  instrument_name: string
-}
-
-export interface RecommendedProps {
-  ticker: PublicGetTickerResponseSchema | null
-  recommendedType?: string
-  loadingTicker?: boolean
 }

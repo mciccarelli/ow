@@ -1,55 +1,33 @@
 'use client'
 
-import useSWR from 'swr'
-import type { CurrencyProps } from '@/types/wizard'
+import { useEffect } from 'react'
 import { useAtom } from 'jotai'
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from '@/components'
-import { fetchAllCurrencies, calculatePercentageChange, formatUSD } from '@/lib'
-import { currencyAtom, lastUpdatedAtom, instrumentsFetcherAtom } from '@/store/wizard'
+import {
+  currencyAtom,
+  instrumentsFetcherAtom,
+  currenciesFetcherAtom,
+  currenciesAtom,
+  isLoadingCurrenciesAtom,
+} from '@/store/wizard'
 
 export function SelectCurrency() {
   const [, setCurrency] = useAtom(currencyAtom)
-  const [, setLastUpdated] = useAtom(lastUpdatedAtom)
   const [, fetchInstruments] = useAtom(instrumentsFetcherAtom)
   const [currency] = useAtom(currencyAtom)
+  const [currencies] = useAtom(currenciesAtom)
+  const [isLoading] = useAtom(isLoadingCurrenciesAtom)
+  const [, fetchCurrencies] = useAtom(currenciesFetcherAtom)
 
-  const {
-    data: currencies,
-    error,
-    isLoading,
-  } = useSWR<CurrencyProps[]>('currencies', async () => {
-    try {
-      const { result } = await fetchAllCurrencies()
-      return result
-        .filter(c => ['BTC', 'ETH'].includes(c.currency))
-        .map(c => {
-          const current = Number(c.spot_price)
-          const previous = Number(c.spot_price_24h)
-          return {
-            ...c,
-            formatted_spot_price: formatUSD(current),
-            formatted_spot_price_24h: formatUSD(previous),
-            percentageChange: Number(calculatePercentageChange(current, previous)),
-            isPositive: current > previous,
-          }
-        })
-    } catch (error) {
-      console.error('Error fetching currencies:', error)
-      throw error
-    } finally {
-      setLastUpdated(Date.now())
-    }
-  })
+  useEffect(() => {
+    fetchCurrencies()
+  }, [fetchCurrencies])
 
   const handleCurrencyChange = async (value: string) => {
     const selected = currencies?.find(c => c.currency === value)
     setCurrency(selected)
-    await fetchInstruments() // Trigger instruments fetch when currency changes
-  }
-
-  if (error) {
-    return <div className="text-sm text-destructive">Failed to load currencies. Please try again later.</div>
+    await fetchInstruments()
   }
 
   if (isLoading) {
