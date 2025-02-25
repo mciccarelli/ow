@@ -6,7 +6,6 @@ export * from './ui/select'
 export * from './ui/separator'
 export * from './ui/skeleton'
 export * from './ui/text-scramble'
-export * from './ui/tooltip'
 
 export { ThemeProvider } from './providers/theme-provider'
 
