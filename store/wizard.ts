@@ -184,4 +184,6 @@ export const resetWizardAtom = atom<[], [], void>([], (get, set) => {
   set(expiryAtom, undefined)
   set(strikeAtom, undefined)
   set(instrumentsAtom, null)
+  set(tickerAtom, null)
+  set(instrumentNameAtom, undefined)
 })
